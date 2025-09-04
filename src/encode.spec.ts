@@ -1,14 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { encode, encodeObject, encodeArray, encodeUri } from "./rison";
 
-describe("encode», () => {
+describe("encode", () => {
   it("sorts object keys lexicographically", () => {
     expect(encodeObject({ b: 1, a: 2 })).toBe("a:2,b:1");
     expect(encode({ b: 1, a: 2 })).toBe("(a:2,b:1)");
   });
 
   it("encodes numbers without plus in exponent", () => {
-    expect(encode(1e+20)).toBe("1e20");
+    // Use a value that formats in exponential form by default
+    expect(encode(1e21)).toBe("1e21");
   });
 
   it("escapes quotes and bangs inside strings using !", () => {
@@ -36,4 +37,3 @@ describe("encode», () => {
     expect(encodeUri("a b,c:@/")).toBe("'a+b,c:@/'");
   });
 });
-

@@ -9,7 +9,7 @@ describe("decode", () => {
   });
 
   it("decodes exponent numbers", () => {
-    expect(decode("1e20")).toBe(1e20);
+    expect(decode("1e21")).toBe(1e21);
   });
 
   it("requires object keys to be identifiers or strings", () => {
@@ -20,4 +20,3 @@ describe("decode", () => {
     expect(() => decode("(a:1 ,b:2)")).toThrow();
   });
 });
-
