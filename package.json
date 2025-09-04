@@ -8,7 +8,8 @@
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "build": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "release": "release-it"
   },
   "author": "Sebastian Software GmbH",
   "description": "URI friendly encoding for JSON structures",
@@ -35,9 +36,14 @@
     "lz-string": "^1.5.0"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^7.0.1",
     "prettier": "^3.6.2",
+    "release-it": "^17.3.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "homepage": "https://github.com/sebastian-software/rison#readme",
   "bugs": {

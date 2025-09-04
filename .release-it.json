@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "before:init": "pnpm run typecheck && pnpm test",
+    "before:release": "pnpm run build"
+  },
+  "git": {
+    "requireCleanWorkingDir": true,
+    "tagName": "v${version}",
+    "commitMessage": "chore(release): ${version}",
+    "push": true
+  },
+  "github": {
+    "release": true,
+    "draft": false
+  },
+  "npm": {
+    "publish": true,
+    "publishArgs": ["--access", "public"]
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md"
+    }
+  }
+}
+

@@ -259,6 +259,18 @@ MIT — see [LICENSE.md](./LICENSE.md).
 Copyright © 2007–2009 Metaweb Technologies, Inc.
 Copyright © 2024–present, Sebastian Software GmbH, Germany.
 
+## Releasing
+
+Manual, assisted by release-it. Ensure your npm and GitHub tokens are configured locally.
+
+```
+pnpm install
+pnpm run release
+```
+
+This runs typecheck/tests, builds, bumps the version, publishes to npm (public), tags the release,
+and publishes a GitHub Release with generated changelog notes.
+
 ## Acknowledgments
 
 - Originally created and published by Metaweb Technologies, Inc. (Google).
