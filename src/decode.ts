@@ -1,15 +1,15 @@
-import { Parser } from "./parser";
-import { encode } from "./encode"; // Ensures error messages match encode's formatting
+import { parse } from "./parser";
+import { encode } from "./encode"; // For consistency in error messaging
 
 /**
  * Parse a Rison string into a JavaScript value.
  */
 export function decode(input: string): any {
-  const errcb = (message: string) => {
-    throw Error("rison decoder error: " + message);
-  };
-  const parser = new Parser(errcb);
-  return parser.parse(input);
+  try {
+    return parse(input);
+  } catch (e: any) {
+    throw Error("rison decoder error: " + e.message);
+  }
 }
 
 /**
