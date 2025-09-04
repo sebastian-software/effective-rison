@@ -6,7 +6,8 @@
     "test:watch": "vitest --pool=forks --workers=1",
     "typecheck": "tsc -p .",
     "format": "prettier -w .",
-    "build": "tsup src/rison.js --format cjs,esm --out-dir dist --sourcemap --clean"
+    "build": "tsup src/rison.js --format cjs,esm --out-dir dist --sourcemap --clean",
+    "prepublishOnly": "pnpm run build"
   },
   "author": "Metaweb Technologies <devolopers@freebase.com>",
   "description": "URI friendly encoding for JSON structures",
