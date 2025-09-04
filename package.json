@@ -15,7 +15,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Nanonid/rison.git"
+    "url": "https://github.com/sebastian-software/rison.git"
   },
   "type": "module",
   "main": "dist/rison.js",
@@ -33,9 +33,9 @@
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
-  "homepage": "https://github.com/Nanonid/rison#readme",
+  "homepage": "https://github.com/sebastian-software/rison#readme",
   "bugs": {
-    "url": "https://github.com/Nanonid/rison/issues"
+    "url": "https://github.com/sebastian-software/rison/issues"
   },
   "files": [
     "dist/"

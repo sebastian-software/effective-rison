@@ -2,7 +2,7 @@
 
 <p>
   <a href="https://www.npmjs.com/package/rison"><img alt="npm" src="https://img.shields.io/npm/v/rison?logo=npm&color=cb3837"></a>
-  <a href="https://github.com/Nanonid/rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Nanonid/rison/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/sebastian-software/rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sebastian-software/rison/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
   <img alt="Types Included" src="https://img.shields.io/badge/Types-Included-3178c6?logo=typescript">
   <img alt="Module" src="https://img.shields.io/badge/ESM-Only-000">
@@ -255,25 +255,10 @@ See Quick Start above for typical usage. For more complex cases, check the tests
 MIT — see [LICENSE.md](./LICENSE.md).
 
 Copyright © 2007–2009 Metaweb Technologies, Inc.
-- Maintained in Germany; originally created by Metaweb Technologies (Google).
-
-
-Modernization and maintenance © 2024–present, Sebastian Software GmbH, Germany.
+Copyright © 2024–present, Sebastian Software GmbH, Germany.
 
 ## Acknowledgments
 
 - Originally created and published by Metaweb Technologies, Inc. (Google).
 - Encoder inspired by Douglas Crockford's json.js; decoder inspired by Oliver Steele's JSON for OpenLaszlo.
-- Thanks to all [contributors](https://github.com/Nanonid/rison/graphs/contributors) over the years.
-
-`${r}`
-
-    ${indented_json(test)}
-
-`$ur`
-
-`$urljson`
-
-`undefined $r2 ok`
-
-${Math.round(100 \* (1.0 - ur.length / urljson.length))}%
+- Thanks to all [contributors](https://github.com/sebastian-software/rison/graphs/contributors) over the years.
