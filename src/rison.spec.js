@@ -1,6 +1,5 @@
-var rison = require('./rison');
-var chai = require('chai');
-var expect = chai.expect;
+import { describe, it, expect } from 'vitest';
+import rison from './rison.js';
 
 
 
@@ -10,13 +9,13 @@ describe('Rison', function() {
 
         var encoded = rison.encode({any: "json", yes:true});
 
-        expect(encoded).to.equal(`(any:json,yes:!t)`);
+        expect(encoded).toBe(`(any:json,yes:!t)`);
 
         var decoded = `(any:json,yes:!t)`;
 
         var decodedValue = rison.decode(decoded);
 
-        expect(decodedValue).to.deep.equal({any:'json', yes:true});
+        expect(decodedValue).toEqual({any:'json', yes:true});
     });
 
     it('Should handle deeply nested objects', function() {
@@ -39,13 +38,13 @@ describe('Rison', function() {
 
         var encoded = rison.encode(deeplyNested);
 
-        expect(encoded).to.equal(`(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`);
+        expect(encoded).toBe(`(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`);
 
         var serializedDeeplyNested = `(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`;
 
         var deserializedDeeplyNested = rison.decode(serializedDeeplyNested);
 
-        expect(deserializedDeeplyNested).to.deep.equal(deeplyNested);
+        expect(deserializedDeeplyNested).toEqual(deeplyNested);
     })
 })
 
@@ -55,13 +54,13 @@ describe('O-Rison', function() {
 
         var encoded = rison.encode_object({supportsObjects: true, ints: 435});
 
-        expect(encoded).to.equal(`ints:435,supportsObjects:!t`);
+        expect(encoded).toBe(`ints:435,supportsObjects:!t`);
 
         var decoded = `ints:435,supportsObjects:!t`;
 
         var decodedValue = rison.decode_object(decoded);
 
-        expect(decodedValue).to.deep.equal({supportsObjects: true, ints: 435});
+        expect(decodedValue).toEqual({supportsObjects: true, ints: 435});
     });
 })
 
@@ -71,12 +70,12 @@ describe('A-Rison', function() {
 
         var encoded = rison.encode_array(['A', 'B', {supportsObjects: true}]);
 
-        expect(encoded).to.equal(`A,B,(supportsObjects:!t)`);
+        expect(encoded).toBe(`A,B,(supportsObjects:!t)`);
 
         var decoded = `A,B,(supportsObjects:!t)`;
 
         var decodedValue = rison.decode_array(decoded);
 
-        expect(decodedValue).to.deep.equal(['A', 'B', {supportsObjects:true}]);
+        expect(decodedValue).toEqual(['A', 'B', {supportsObjects:true}]);
     });
 })
