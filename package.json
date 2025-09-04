@@ -12,6 +12,9 @@
     "url": "https://github.com/Nanonid/rison.git"
   },
   "main": "js/rison.js",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
