@@ -1,5 +1,4 @@
-The MIT License (MIT)
-=====================
+# The MIT License (MIT)
 
 Copyright © `2007-2009` `Metaweb Technologies, Inc.`
 

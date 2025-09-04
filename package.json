@@ -6,6 +6,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc -p .",
     "format": "prettier -w .",
+    "format:check": "prettier -c .",
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm run build"
   },

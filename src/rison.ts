@@ -133,7 +133,8 @@ export class Parser {
     this.index = 0;
     this.message = null;
     let value = this.readValue();
-    if (!this.message && this.next()) value = this.error(`unable to parse string as rison: '${encode(str)}'`);
+    if (!this.message && this.next())
+      value = this.error(`unable to parse string as rison: '${encode(str)}'`);
     if (this.message && this.errorHandler) this.errorHandler(this.message, this.index);
     return value;
   }
@@ -227,7 +228,7 @@ export class Parser {
       const segments: string[] = [];
       let c: string | undefined;
       while ((c = s.charAt(i++)) !== "'") {
-        if (!c) return this.error("unmatched " + "'" + "");
+        if (!c) return this.error('unmatched ' + "'" + '');
         if (c === '!') {
           if (start < i - 1) segments.push(s.slice(start, i - 1));
           c = s.charAt(i++);
@@ -316,4 +317,3 @@ const rison = {
 };
 
 export default rison;
-

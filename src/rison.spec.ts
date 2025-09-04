@@ -1,81 +1,73 @@
 import { describe, it, expect } from 'vitest';
 import rison from './rison';
 
+describe('Rison', function () {
+  it('Should do what the README says it does', function () {
+    var encoded = rison.encode({ any: 'json', yes: true });
 
+    expect(encoded).toBe(`(any:json,yes:!t)`);
 
-describe('Rison', function() {
+    var decoded = `(any:json,yes:!t)`;
 
-    it('Should do what the README says it does', function() {
+    var decodedValue = rison.decode(decoded);
 
-        var encoded = rison.encode({any: "json", yes:true});
+    expect(decodedValue).toEqual({ any: 'json', yes: true });
+  });
 
-        expect(encoded).toBe(`(any:json,yes:!t)`);
+  it('Should handle deeply nested objects', function () {
+    var deeplyNested = {
+      A: {
+        B: {
+          C: {
+            D: 'E',
+            F: 'G',
+          },
+        },
+        H: {
+          I: {
+            J: 'K',
+            L: 'M',
+          },
+        },
+      },
+    };
 
-        var decoded = `(any:json,yes:!t)`;
+    var encoded = rison.encode(deeplyNested);
 
-        var decodedValue = rison.decode(decoded);
+    expect(encoded).toBe(`(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`);
 
-        expect(decodedValue).toEqual({any:'json', yes:true});
-    });
+    var serializedDeeplyNested = `(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`;
 
-    it('Should handle deeply nested objects', function() {
-        var deeplyNested = {
-            A: {
-                B: {
-                    C: {
-                        D: 'E',
-                        F: 'G'
-                    }
-                },
-                H: {
-                    I: {
-                        J:'K',
-                        L:'M'
-                    }
-                }
-            }
-        };
+    var deserializedDeeplyNested = rison.decode(serializedDeeplyNested);
 
-        var encoded = rison.encode(deeplyNested);
+    expect(deserializedDeeplyNested).toEqual(deeplyNested);
+  });
+});
 
-        expect(encoded).toBe(`(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`);
+describe('O-Rison', function () {
+  it('Should do what the README says it does', function () {
+    var encoded = rison.encode_object({ supportsObjects: true, ints: 435 });
 
-        var serializedDeeplyNested = `(A:(B:(C:(D:E,F:G)),H:(I:(J:K,L:M))))`;
+    expect(encoded).toBe(`ints:435,supportsObjects:!t`);
 
-        var deserializedDeeplyNested = rison.decode(serializedDeeplyNested);
+    var decoded = `ints:435,supportsObjects:!t`;
 
-        expect(deserializedDeeplyNested).toEqual(deeplyNested);
-    })
-})
+    var decodedValue = rison.decode_object(decoded);
 
-describe('O-Rison', function() {
+    expect(decodedValue).toEqual({ supportsObjects: true, ints: 435 });
+  });
+});
 
-    it('Should do what the README says it does', function() {
+describe('A-Rison', function () {
+  it('Should do what the README says it does', function () {
+    var encoded = rison.encode_array(['A', 'B', { supportsObjects: true }]);
 
-        var encoded = rison.encode_object({supportsObjects: true, ints: 435});
+    expect(encoded).toBe(`A,B,(supportsObjects:!t)`);
 
-        expect(encoded).toBe(`ints:435,supportsObjects:!t`);
+    var decoded = `A,B,(supportsObjects:!t)`;
 
-        var decoded = `ints:435,supportsObjects:!t`;
+    var decodedValue = rison.decode_array(decoded);
 
-        var decodedValue = rison.decode_object(decoded);
-
-        expect(decodedValue).toEqual({supportsObjects: true, ints: 435});
-    });
-})
-
-describe('A-Rison', function() {
-
-    it('Should do what the README says it does', function() {
-
-        var encoded = rison.encode_array(['A', 'B', {supportsObjects: true}]);
-
-        expect(encoded).toBe(`A,B,(supportsObjects:!t)`);
-
-        var decoded = `A,B,(supportsObjects:!t)`;
-
-        var decodedValue = rison.decode_array(decoded);
-
-        expect(decodedValue).toEqual(['A', 'B', {supportsObjects:true}]);
-    });
-})
+    expect(decodedValue).toEqual(['A', 'B', { supportsObjects: true }]);
+  });
+});
