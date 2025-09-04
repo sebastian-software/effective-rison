@@ -10,9 +10,15 @@
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm run build"
   },
-  "author": "Metaweb Technologies <devolopers@freebase.com>",
+  "author": "Sebastian Software GmbH",
   "description": "URI friendly encoding for JSON structures",
   "license": "MIT",
+  "maintainers": [
+    "Sebastian Software GmbH"
+  ],
+  "contributors": [
+    "Metaweb Technologies, Inc. (original authors)"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sebastian-software/rison.git"
