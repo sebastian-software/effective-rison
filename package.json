@@ -6,7 +6,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc -p .",
     "format": "prettier -w .",
-    "build": "tsup src/rison.js --format cjs,esm --out-dir dist --sourcemap --clean",
+    "build": "tsup src/rison.ts --format cjs,esm --dts --out-dir dist --sourcemap --clean",
     "prepublishOnly": "pnpm run build"
   },
   "author": "Metaweb Technologies <devolopers@freebase.com>",
@@ -16,7 +16,8 @@
     "type": "git",
     "url": "https://github.com/Nanonid/rison.git"
   },
-  "main": "src/rison.js",
+  "main": "dist/rison.js",
+  "module": "dist/rison.mjs",
   "engines": {
     "node": ">=22"
   },

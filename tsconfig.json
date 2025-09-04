@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "allowJs": true,
-    "checkJs": true,
+    "allowJs": false,
+    "checkJs": false,
     "noEmit": true,
     "strict": false,
     "esModuleInterop": true,
@@ -12,6 +12,6 @@
     "allowUmdGlobalAccess": true,
     "lib": ["ES2020", "DOM"]
   },
-  "include": ["src/**/*.js", "types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "src/**/*.spec.js"]
+  "include": ["src/**/*.ts", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }
