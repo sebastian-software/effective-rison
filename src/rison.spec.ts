@@ -46,13 +46,13 @@ describe("Rison", function () {
 
 describe("O-Rison", function () {
   it("Should do what the README says it does", function () {
-    var encoded = rison.encode_object({ supportsObjects: true, ints: 435 });
+    var encoded = rison.encodeObject({ supportsObjects: true, ints: 435 });
 
     expect(encoded).toBe(`ints:435,supportsObjects:!t`);
 
     var decoded = `ints:435,supportsObjects:!t`;
 
-    var decodedValue = rison.decode_object(decoded);
+    var decodedValue = rison.decodeObject(decoded);
 
     expect(decodedValue).toEqual({ supportsObjects: true, ints: 435 });
   });
@@ -60,13 +60,13 @@ describe("O-Rison", function () {
 
 describe("A-Rison", function () {
   it("Should do what the README says it does", function () {
-    var encoded = rison.encode_array(["A", "B", { supportsObjects: true }]);
+    var encoded = rison.encodeArray(["A", "B", { supportsObjects: true }]);
 
     expect(encoded).toBe(`A,B,(supportsObjects:!t)`);
 
     var decoded = `A,B,(supportsObjects:!t)`;
 
-    var decodedValue = rison.decode_array(decoded);
+    var decodedValue = rison.decodeArray(decoded);
 
     expect(decodedValue).toEqual(["A", "B", { supportsObjects: true }]);
   });

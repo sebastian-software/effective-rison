@@ -15,13 +15,23 @@ export function decode(input: string): any {
 /**
  * Parse an o-rison string by wrapping it in parentheses before decoding.
  */
-export function decode_object(input: string): any {
+export function decodeObject(input: string): any {
   return decode("(" + input + ")");
 }
 
 /**
+ * @deprecated Use decodeObject instead.
+ */
+export const decode_object = decodeObject;
+
+/**
  * Parse an a-rison string by prefixing with !() before decoding.
  */
-export function decode_array(input: string): any {
+export function decodeArray(input: string): any {
   return decode("!(" + input + ")");
 }
+
+/**
+ * @deprecated Use decodeArray instead.
+ */
+export const decode_array = decodeArray;
