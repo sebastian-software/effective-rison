@@ -6,7 +6,7 @@
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
   <img alt="Module" src="https://img.shields.io/badge/ESM-Only-000">
   <img alt="Node" src="https://img.shields.io/node/v/rison">
-  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-9+-F69220?logo=pnpm">
+  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-10+-F69220?logo=pnpm">
   <img alt="Prettier" src="https://img.shields.io/badge/Code%20Style-Prettier-ff69b4?logo=prettier">
   <img alt="Vitest" src="https://img.shields.io/badge/Tests-Vitest-6E9F18">
   <img alt="Made in Germany" src="https://img.shields.io/badge/Made%20in-Germany-black">
@@ -14,10 +14,8 @@
 
 Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures.
 
-Rison is a slight variation of JSON that looks vastly superior after URI encoding, ideal for compact
-state in URLs while still expressing the same data structures as JSON.
-
-You can skip straight to some examples, or read on for more background.
+Rison is a slight variation of JSON that looks vastly superior after URI encoding — great for
+storing compact state in URLs while expressing the same data structures as JSON.
 
 ## Quick Start
 
@@ -51,8 +49,6 @@ const value = decompressFromUrl(compact);
 // -> original value
 ```
 
-### Quick Start (Javascript)
-
 ## Installation
 
 ```
@@ -84,7 +80,7 @@ Types are published via `dist/rison.d.ts`.
 - Removed default export; use named imports.
 - Removed snake_case API; use camelCase (`encodeObject`, `encodeArray`, `encodeUri`, `decodeObject`, `decodeArray`).
 
-### Why another data serialization format?
+## Why another data serialization format?
 
 Rison is intended to meet the following goals, in roughly this order:
 
@@ -109,7 +105,7 @@ possible:
 - It uses the same data model as, and a very similar syntax to [JSON](http://json.org). The Rison grammar is only a slight alteration of the JSON grammar.
 - It introduces very little additional quoting, since we assume that URI encoding will be applied on top of the Rison encoding.
 
-### Differences from JSON syntax
+## Differences from JSON syntax
 
 - no whitespace is permitted except inside quoted strings (by default).
 - almost all character escaping is left to the uri encoder.
@@ -136,7 +132,7 @@ strings by checking the first character. Rison structures start with `(` or
 expects a JSON encoded object or array can accept Rison-encoded objects
 without loss of compatibility.
 
-### Interaction with URI %-encoding
+## Interaction with URI %-encoding
 
 Rison syntax is designed to produce strings that be legible after being [form-
 encoded](http://www.w3.org/TR/html4/interact/forms.html#form-content-type) for
@@ -177,7 +173,7 @@ language alphanumeric characters and some punctuation that is common in
 identifiers ("`_`", "`-`", "`.`", "`/`", and others). However, whitespace and
 most punctuation characters should require quoting.
 
-### Emailing URIs
+## Emailing URIs
 
 Most text emailers are conservative about what they turn into a hyperlink, and
 they will assume that characters like '(' mean the end of the URI. This
@@ -188,7 +184,7 @@ comes up a lot in practice. You could use Rison with a more aggressive URI
 encoder to generate emailable URIs. You can also wrap your emailed URIs in
 angle brackets: `<http://...>` which some mail readers have better luck with.
 
-### Further Rationale
+## Further Rationale
 
 **Passing data in URIs** is necessary in many situations. Many web services rely on the HTTP GET method, which can take advantage of an extensive deployed caching infrastructure. Browsers also have different capabilities for GET, including the crucial ability to make cross-site requests. It is also very convenient to store the state of a small browser application in the URI.
 
@@ -196,7 +192,7 @@ angle brackets: `<http://...>` which some mail readers have better luck with.
 
 **Compactness** is important because of implementation limits on URI length. Internet Explorer is once again the weakest link at 2K. One could certainly invent a more compact representation by dropping the human-readable constraint and using a compression algorithm.
 
-### Variations
+## Variations
 
 There are several variations on Rison which are useful or at least thought-
 provoking.
@@ -243,25 +239,9 @@ parameters or allow duplicate parameter names.
 This extension doesn't change the parsing of standard Rison strings because
 "`&`", "`=`", and "`;`" are already illegal in Rison identifiers.
 
-### Examples
+## Examples
 
-These examples compare Rison and JSON representations of identical values. The
-table is generated in the browser using [mjt](http://mjtemplate.org/).
-
-The compression ratio column shows `(1&nbsp_place_holder;-&nbsp_place_holder;e
-ncoded_rison_size)&nbsp_place_holder;/&nbsp_place_holder;encoded_json_size.`
-
-On a log of Freebase mqlread service URIs, the queries were from 35% to 45%
-smaller when encoded with Rison.
-
-URI encoding is done with a custom URI encoder which is less aggressive than
-Javascript's built-in `encodeURIComponent()`.
-
-Rison JSON URI-encoded Rison URI-encoded JSON roundtrip test compression
-
-var test = rison.decode(r); if (typeof(test) != 'undefined') { var json =
-JSON.stringify(test); var urljson = rison.quote(json); var ur =
-rison.quote(r); var r2 = rison.encode(test); }
+See Quick Start above for typical usage. For more complex cases, check the tests in `src/*.spec.ts`.
 
 ## Contributing
 
