@@ -16,12 +16,5 @@
   "npm": {
     "publish": true,
     "publishArgs": ["--access", "public"]
-  },
-  "plugins": {
-    "@release-it/conventional-changelog": {
-      "preset": "conventionalcommits",
-      "infile": "CHANGELOG.md"
-    }
   }
 }
-

@@ -269,7 +269,7 @@ pnpm run release
 ```
 
 This runs typecheck/tests, builds, bumps the version, publishes to npm (public), tags the release,
-and publishes a GitHub Release with generated changelog notes.
+and publishes a GitHub Release.
 
 ## Acknowledgments
 
