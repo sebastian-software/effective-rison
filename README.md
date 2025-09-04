@@ -1,57 +1,63 @@
 # rison
 
-Rison mirror of now dead site (http://mjtemplate.org/examples/rison.html)
+Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures.
 
-[Contributors](https://github.com/Nanonid/rison/graphs/contributors)
-
-# Rison - Compact Data in URIs
-
-This page describes _Rison_, a data serialization format optimized for
-compactness in URIs. Rison is a slight variation of JSON that looks vastly
-superior after URI encoding. Rison still expresses exactly the same set of
-data structures as JSON, so data can be translated back and forth without loss
-or guesswork.
+Rison is a slight variation of JSON that looks vastly superior after URI encoding, ideal for compact
+state in URLs while still expressing the same data structures as JSON.
 
 You can skip straight to some examples, or read on for more background.
 
-Downloads:
+## Quick Start
 
-- [rison.js](./js/rison.js) includes a Javascript Rison encoder (based on [Douglas Crockford](http://json.org)'s [json.js](http://json.org/json.js)) and decoder (based on [Oliver Steele](http://osteele.com)'s [JSON for OpenLaszlo](http://osteele.com/sources/openlaszlo/json/)).
-- [rison.py](http://freebase-python.googlecode.com/svn/trunk/freebase/rison.py) contains a decoder in Python.
-- [Tim Fletcher](http://tfletcher.com/dev/) has implemented [Rison in Ruby](http://rison.rubyforge.org/) including both encoder and decoder.
+ESM usage (Node 22+ or a bundler):
+
+```js
+import { encode, decode, encodeObject, encodeArray } from "rison";
+
+encode({ any: "json", yes: true });
+// -> (any:json,yes:!t)
+
+decode("(any:json,yes:!t)");
+// -> { any: 'json', yes: true }
+
+encodeObject({ supportsObjects: true, ints: 435 });
+// -> ints:435,supportsObjects:!t
+
+encodeArray(["A", "B", { supportsObjects: true }]);
+// -> A,B,(supportsObjects:!t)
+```
+
+Optional URL compression helpers using lz-string:
+
+```js
+import { compressToUrl, decompressFromUrl } from "rison";
+
+const compact = compressToUrl({ page: 1, filters: { active: true } });
+// -> safe, compact string for query params/fragments
+
+const value = decompressFromUrl(compact);
+// -> original value
+```
 
 ### Quick Start (Javascript)
 
-Install with npm or copy in `js/rison.js` manually, the script is
-compatible with AMD and CommonJS (such as browserify or node), you
-can also drop it into a `<script>` tag, creating the `rison` global.
+## API
 
-Once installed you have the following methods available:
+- `encode(value)` → string
+- `decode(string)` → any
+- `encodeObject(object)` → string (without surrounding parentheses)
+- `encodeArray(array)` → string (without surrounding `!()`)
+- `encodeUri(value)` → string (Rison-encode + relaxed URI escaping)
+- `compressToUrl(value)` → string (Rison-encode + lz-string compress to URI component)
+- `decompressFromUrl(string)` → any (reverse of `compressToUrl`)
 
-```js
-var rison = require("rison");
+Types are published via `dist/rison.d.ts`.
 
-rison.encode({ any: "json", yes: true });
-rison.encode_array(["A", "B", { supportsObjects: true }]);
-rison.encode_object({ supportsObjects: true, ints: 435 });
+## Breaking changes in v1
 
-// Rison
-rison.encode({ any: "json", yes: true });
-// (any:json,yes:!t)
-
-// O-Rison
-rison.encode_object({ supportsObjects: true, ints: 435 });
-// ints:435,supportsObjects:!t
-
-// A-Rison
-rison.encode_array(["A", "B", { supportsObjects: true }]);
-// A,B,(supportsObjects:!t)
-
-// Decode with: rison.decode, rison.decode_object, rison.decode_array
-// Example:
-rison.decode("(any:json,yes:!t)");
-// { any: 'json', yes: true }
-```
+- ESM-only package (`"type": "module"`), Node 22+ recommended.
+- Removed default export; use named imports.
+- Removed snake_case API; use camelCase (`encodeObject`, `encodeArray`, `encodeUri`, `decodeObject`, `decodeArray`).
 
 ### Why another data serialization format?
 
@@ -80,7 +86,7 @@ possible:
 
 ### Differences from JSON syntax
 
-- no whitespace is permitted except inside quoted strings.
+- no whitespace is permitted except inside quoted strings (by default).
 - almost all character escaping is left to the uri encoder.
 - single-quotes are used for quoting, but quotes can and should be left off strings when the strings are simple identifiers.
 - the `e+` exponent format is forbidden, since `+` is not safe in form values and the plain `e` format is equivalent.
@@ -88,20 +94,12 @@ possible:
 - object keys should be lexically sorted when encoding. the intent is to improve url cacheability.
 - uri-safe tokens are used in place of the standard json tokens:
 
-rison token json token meaning
-
-- `'` `"` string quote
-- `!` `\` string escape
-- `(...)` `{...}` object
-- `!(...)` `[...]` array
+Token mapping (Rison → JSON): `'` → `"` (string quote), `!` → `\\` (escape), `(...)` → `{...}` (object),
+`!(...)` → `[...]` (array)
 
 - the JSON literals that look like identifiers (`true`, `false` and `null`) are represented as `!` sequences:
 
-rison token json token
-
-- `!t` true
-- `!f` false
-- `!n` null
+Literals: `!t` (true), `!f` (false), `!n` (null)
 
 The `!` character plays two similar but different roles, as an escape
 character within strings, and as a marker for special values. This may be
@@ -128,7 +126,7 @@ as special syntax.
 Note that most URI encoding libraries are very conservative, percent-encoding
 many characters that are legal according to [RFC
 3986](http://gbiv.com/protocols/uri/rfc/rfc3986.html). For example,
-Javascript's builtin `encodeURIComponent()` function will still make Rison
+Javascript's builtin `encodeURIComponent()` will still make Rison
 strings difficult to read. The rison.js library includes a more tolerant URI
 encoder.
 
