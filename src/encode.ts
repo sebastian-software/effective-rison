@@ -1,4 +1,4 @@
-import { id_ok } from "./constants";
+import { identifierRegex } from "./constants";
 
 export function quote(x: string): string {
   if (/^[-A-Za-z0-9~!*()_.',:@$/]*$/.test(x)) return x;
@@ -11,14 +11,20 @@ export function quote(x: string): string {
     .replace(/%20/g, "+");
 }
 
-type Encodable = any;
+/**
+ * Values encodable by the Rison serializer.
+ */
+type RisonEncodable = any;
 
-const s: Record<string, (x: any) => string | undefined> = {
+/**
+ * Dispatch table of type-name to serializer implementation.
+ */
+const serializers: Record<string, (x: any) => string | undefined> = {
   array(x: any[]) {
     const a: string[] = ["!("];
     let b = false;
     for (let i = 0; i < x.length; i++) {
-      const v = enc((x as any)[i]);
+      const v = serializeValue((x as any)[i]);
       if (typeof v === "string") {
         if (b) a.push(",");
         a.push(v);
@@ -40,7 +46,7 @@ const s: Record<string, (x: any) => string | undefined> = {
   },
   object(x: Record<string, any> | null) {
     if (!x) return "!n";
-    if (Array.isArray(x)) return s.array(x);
+    if (Array.isArray(x)) return serializers.array(x);
 
     const a: string[] = ["("];
     let b = false;
@@ -49,10 +55,10 @@ const s: Record<string, (x: any) => string | undefined> = {
     ks.sort();
     for (let ki = 0; ki < ks.length; ki++) {
       const i = ks[ki];
-      const v = enc((x as any)[i]);
+      const v = serializeValue((x as any)[i]);
       if (typeof v === "string") {
         if (b) a.push(",");
-        const k = isNaN(parseInt(i as any)) ? s.string(i) : s.number(parseInt(i as any, 10));
+        const k = isNaN(parseInt(i as any)) ? serializers.string(i) : serializers.number(parseInt(i as any, 10));
         a.push(k as string, ":", v);
         b = true;
       }
@@ -62,7 +68,7 @@ const s: Record<string, (x: any) => string | undefined> = {
   },
   string(x: string) {
     if (x === "") return "''";
-    if (id_ok.test(x)) return x;
+    if (identifierRegex.test(x)) return x;
     const sq: Record<string, boolean> = { "'": true, "!": true };
     x = x.replace(/(['!])/g, function (a, b) {
       if (sq[b]) return "!" + b;
@@ -75,29 +81,45 @@ const s: Record<string, (x: any) => string | undefined> = {
   }
 };
 
-function enc(v: Encodable): string | undefined {
+/**
+ * Serialize any supported value into a Rison string fragment.
+ */
+function serializeValue(v: RisonEncodable): string | undefined {
   if (v && typeof (v as any).toJSON === "function") v = (v as any).toJSON();
-  const fn = s[typeof v];
+  const fn = serializers[typeof v];
   return fn ? (fn as any)(v) : undefined;
 }
 
-export function encode(v: Encodable): string {
-  return enc(v) as string;
+/**
+ * Encode any supported value to a Rison string.
+ */
+export function encode(v: RisonEncodable): string {
+  return serializeValue(v) as string;
 }
 
+/**
+ * Encode an object without the surrounding parentheses.
+ * Throws if provided value is not a plain object.
+ */
 export function encode_object(v: Record<string, any>): string {
   if (typeof v !== "object" || v === null || Array.isArray(v)) throw new Error("rison.encode_object expects an object argument");
-  const r = s.object(v) as string;
-  return r.substring(1, r.length - 1);
+  const rendered = serializers.object(v) as string;
+  return rendered.substring(1, rendered.length - 1);
 }
 
+/**
+ * Encode an array without the surrounding !() markers.
+ * Throws if provided value is not an array.
+ */
 export function encode_array(v: any[]): string {
   if (!Array.isArray(v)) throw new Error("rison.encode_array expects an array argument");
-  const r = s.array(v) as string;
-  return r.substring(2, r.length - 1);
+  const rendered = serializers.array(v) as string;
+  return rendered.substring(2, rendered.length - 1);
 }
 
-export function encode_uri(v: Encodable): string {
-  return quote((s as any)[typeof v](v));
+/**
+ * Encode a value and make it URL-friendly by applying a relaxed escaping.
+ */
+export function encode_uri(v: RisonEncodable): string {
+  return quote((serializers as any)[typeof v](v));
 }
-

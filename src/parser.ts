@@ -1,17 +1,27 @@
-import { next_id } from "./constants";
+import { nextIdentifierRegex } from "./constants";
 import { encode } from "./encode";
 
+/**
+ * Stateful Rison parser.
+ *
+ * Provides error reporting via an optional callback and mirrors the legacy API.
+ */
 export class Parser {
+  /** Whitespace characters accepted by the parser (empty by default). */
   static WHITESPACE = "";
+  /** Input being parsed. */
   string!: string;
+  /** Current index into the input. */
   index!: number;
+  /** Last error message if any. */
   message: string | null = null;
+  /** Optional error handler callback. */
   errorHandler?: (msg: string, index?: number) => void;
 
   constructor(errcb?: (msg: string, index?: number) => void) {
     if (errcb) this.errorHandler = errcb;
-    // initialize digit handlers in table
-    for (let i = 0; i <= 9; i++) (this.table as any)[String(i)] = this.table["-"];
+    // Initialize digit handlers in the dispatch table
+    for (let i = 0; i <= 9; i++) (this.dispatchTable as any)[String(i)] = this.dispatchTable["-"];
   }
 
   setOptions(options: { errorHandler?: (msg: string, index?: number) => void }) {
@@ -34,15 +44,16 @@ export class Parser {
     return undefined;
   }
 
+  /** Read the next value from the input. */
   readValue(): any {
     const c = this.next();
-    const fn = c && (this.table as any)[c];
+    const fn = c && (this.dispatchTable as any)[c];
     if (fn) return fn.apply(this);
 
     const s = this.string;
     const i = this.index - 1;
-    next_id.lastIndex = i;
-    const m = next_id.exec(s);
+    nextIdentifierRegex.lastIndex = i;
+    const m = nextIdentifierRegex.exec(s);
     if (m && m.length > 0) {
       const id = m[0];
       this.index = i + id.length;
@@ -52,7 +63,8 @@ export class Parser {
     return this.error("empty expression");
   }
 
-  static parse_array(parser: Parser) {
+  /** Parse an array after encountering a bang+open-paren sequence. */
+  static parseArray(parser: Parser) {
     const ar: any[] = [];
     let c: string | undefined;
     while ((c = parser.next()) !== ")") {
@@ -69,19 +81,21 @@ export class Parser {
     return ar;
   }
 
-  static bangs: Record<string, any> = {
+  /** Literals introduced by a leading bang. */
+  static bangLiterals: Record<string, any> = {
     t: true,
     f: false,
     n: null,
-    "(": Parser.parse_array
+    "(": Parser.parseArray
   };
 
-  table: Record<string, Function> = {
+  /** Character-dispatch table for reading values. */
+  dispatchTable: Record<string, Function> = {
     "!": function (this: Parser) {
       const s = this.string;
       const c = s.charAt(this.index++);
       if (!c) return this.error('"!" at end of input');
-      const x = Parser.bangs[c as keyof typeof Parser.bangs];
+      const x = Parser.bangLiterals[c as keyof typeof Parser.bangLiterals];
       if (typeof x === "function") {
         return (x as Function).call(null, this);
       } else if (typeof x === "undefined") {
@@ -158,6 +172,7 @@ export class Parser {
     }
   };
 
+  /** Return the next non-whitespace character, or undefined if at end. */
   next(): string | undefined {
     let c: string | undefined;
     const s = this.string;
@@ -170,4 +185,3 @@ export class Parser {
     return c;
   }
 }
-

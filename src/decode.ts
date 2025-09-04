@@ -1,19 +1,27 @@
 import { Parser } from "./parser";
-import { encode } from "./encode"; // ensures Parser.parse error message stays consistent
+import { encode } from "./encode"; // Ensures error messages match encode's formatting
 
-export function decode(r: string): any {
-  const errcb = (e: string) => {
-    throw Error("rison decoder error: " + e);
+/**
+ * Parse a Rison string into a JavaScript value.
+ */
+export function decode(input: string): any {
+  const errcb = (message: string) => {
+    throw Error("rison decoder error: " + message);
   };
-  const p = new Parser(errcb);
-  return p.parse(r);
+  const parser = new Parser(errcb);
+  return parser.parse(input);
 }
 
-export function decode_object(r: string): any {
-  return decode("(" + r + ")");
+/**
+ * Parse an o-rison string by wrapping it in parentheses before decoding.
+ */
+export function decode_object(input: string): any {
+  return decode("(" + input + ")");
 }
 
-export function decode_array(r: string): any {
-  return decode("!(" + r + ")");
+/**
+ * Parse an a-rison string by prefixing with !() before decoding.
+ */
+export function decode_array(input: string): any {
+  return decode("!(" + input + ")");
 }
-
