@@ -22,7 +22,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebastian-software/rison.git"
+    "url": "https://github.com/sebastian-software/effective-rison.git"
   },
   "type": "module",
   "main": "dist/rison.js",
@@ -44,9 +44,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/sebastian-software/rison#readme",
+  "homepage": "https://github.com/sebastian-software/effective-rison#readme",
   "bugs": {
-    "url": "https://github.com/sebastian-software/rison/issues"
+    "url": "https://github.com/sebastian-software/effective-rison/issues"
   },
   "files": [
     "dist/"

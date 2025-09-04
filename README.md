@@ -2,7 +2,7 @@
 
 <p>
   <a href="https://www.npmjs.com/package/@effective/rison"><img alt="npm" src="https://img.shields.io/npm/v/%40effective%2Frison?logo=npm&color=cb3837"></a>
-  <a href="https://github.com/sebastian-software/rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sebastian-software/rison/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
   <img alt="Types Included" src="https://img.shields.io/badge/Types-Included-3178c6?logo=typescript">
   <img alt="Module" src="https://img.shields.io/badge/ESM-Only-000">
@@ -275,4 +275,4 @@ and publishes a GitHub Release.
 
 - Originally created and published by Metaweb Technologies, Inc. (Google).
 - Encoder inspired by Douglas Crockford's json.js; decoder inspired by Oliver Steele's JSON for OpenLaszlo.
-- Thanks to all [contributors](https://github.com/sebastian-software/rison/graphs/contributors) over the years.
+- Thanks to all [contributors](https://github.com/sebastian-software/effective-rison/graphs/contributors) over the years.
