@@ -12,6 +12,6 @@
     "allowUmdGlobalAccess": true,
     "lib": ["ES2020", "DOM"]
   },
-  "include": ["js/**/*.js", "types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "js/**/*.spec.js"]
+  "include": ["src/**/*.js", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.spec.js"]
 }
