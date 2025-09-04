@@ -102,30 +102,20 @@ export function encode(v: RisonEncodable): string {
  * Throws if provided value is not a plain object.
  */
 export function encodeObject(v: Record<string, any>): string {
-  if (typeof v !== "object" || v === null || Array.isArray(v)) throw new Error("rison.encode_object expects an object argument");
+  if (typeof v !== "object" || v === null || Array.isArray(v)) throw new Error("rison.encodeObject expects an object argument");
   const rendered = serializers.object(v) as string;
   return rendered.substring(1, rendered.length - 1);
 }
-
-/**
- * @deprecated Use encodeObject instead.
- */
-export const encode_object = encodeObject;
 
 /**
  * Encode an array without the surrounding !() markers.
  * Throws if provided value is not an array.
  */
 export function encodeArray(v: any[]): string {
-  if (!Array.isArray(v)) throw new Error("rison.encode_array expects an array argument");
+  if (!Array.isArray(v)) throw new Error("rison.encodeArray expects an array argument");
   const rendered = serializers.array(v) as string;
   return rendered.substring(2, rendered.length - 1);
 }
-
-/**
- * @deprecated Use encodeArray instead.
- */
-export const encode_array = encodeArray;
 
 /**
  * Encode a value and make it URL-friendly by applying a relaxed escaping.
@@ -133,8 +123,3 @@ export const encode_array = encodeArray;
 export function encodeUri(v: RisonEncodable): string {
   return quote((serializers as any)[typeof v](v));
 }
-
-/**
- * @deprecated Use encodeUri instead.
- */
-export const encode_uri = encodeUri;
