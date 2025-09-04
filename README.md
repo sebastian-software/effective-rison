@@ -1,5 +1,17 @@
 # rison
 
+<p>
+  <a href="https://www.npmjs.com/package/rison"><img alt="npm" src="https://img.shields.io/npm/v/rison?logo=npm&color=cb3837"></a>
+  <a href="https://github.com/Nanonid/rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Nanonid/rison/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
+  <img alt="Module" src="https://img.shields.io/badge/ESM-Only-000">
+  <img alt="Node" src="https://img.shields.io/node/v/rison">
+  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-9+-F69220?logo=pnpm">
+  <img alt="Prettier" src="https://img.shields.io/badge/Code%20Style-Prettier-ff69b4?logo=prettier">
+  <img alt="Vitest" src="https://img.shields.io/badge/Tests-Vitest-6E9F18">
+  <img alt="Made in Germany" src="https://img.shields.io/badge/Made%20in-Germany-black">
+</p>
+
 Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures.
 
 Rison is a slight variation of JSON that looks vastly superior after URI encoding, ideal for compact
@@ -40,6 +52,19 @@ const value = decompressFromUrl(compact);
 ```
 
 ### Quick Start (Javascript)
+
+## Installation
+
+```
+pnpm add rison
+# or
+npm i rison
+```
+
+## Requirements
+
+- Node.js 22+ (ESM-only package)
+- pnpm or npm (pnpm recommended)
 
 ## API
 
@@ -237,6 +262,22 @@ Rison JSON URI-encoded Rison URI-encoded JSON roundtrip test compression
 var test = rison.decode(r); if (typeof(test) != 'undefined') { var json =
 JSON.stringify(test); var urljson = rison.quote(json); var ur =
 rison.quote(r); var r2 = rison.encode(test); }
+
+## Contributing
+
+- Run tests: `pnpm test`
+- Typecheck: `pnpm run typecheck`
+- Format: `pnpm run format`
+
+## License
+
+MIT — see [LICENSE.md](./LICENSE.md).
+
+Copyright © 2007–2009 Metaweb Technologies, Inc.
+- Maintained in Germany; originally created by Metaweb Technologies (Google).
+
+
+Modernization and maintenance © 2024–present, Maintainers in Germany.
 
 `${r}`
 
