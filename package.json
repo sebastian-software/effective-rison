@@ -15,7 +15,7 @@
   },
   "main": "js/rison.js",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "chai": "^4.3.10",
