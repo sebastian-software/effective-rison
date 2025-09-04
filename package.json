@@ -2,8 +2,8 @@
   "name": "rison",
   "version": "0.1.3",
   "scripts": {
-    "test": "vitest run --pool=forks",
-    "test:watch": "vitest --pool=forks",
+    "test": "vitest run --pool=forks --workers=1",
+    "test:watch": "vitest --pool=forks --workers=1",
     "typecheck": "tsc -p .",
     "format": "prettier -w .",
     "build": "tsup src/rison.js --format cjs,esm --out-dir dist --sourcemap --clean"
