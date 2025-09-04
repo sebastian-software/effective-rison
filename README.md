@@ -1,7 +1,7 @@
 # rison
 
 <p>
-  <a href="https://www.npmjs.com/package/rison"><img alt="npm" src="https://img.shields.io/npm/v/rison?logo=npm&color=cb3837"></a>
+  <a href="https://www.npmjs.com/package/@effective/rison"><img alt="npm" src="https://img.shields.io/npm/v/%40effective%2Frison?logo=npm&color=cb3837"></a>
   <a href="https://github.com/sebastian-software/rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sebastian-software/rison/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
   <img alt="Types Included" src="https://img.shields.io/badge/Types-Included-3178c6?logo=typescript">
@@ -25,7 +25,7 @@ Original project: https://github.com/Nanonid/rison
 ESM usage (Node 22+ or a bundler):
 
 ```js
-import { encode, decode, encodeObject, encodeArray } from "rison";
+import { encode, decode, encodeObject, encodeArray } from "@effective/rison";
 
 encode({ any: "json", yes: true });
 // -> (any:json,yes:!t)
@@ -43,7 +43,7 @@ encodeArray(["A", "B", { supportsObjects: true }]);
 Optional URL compression helpers using lz-string:
 
 ```js
-import { compressToUrl, decompressFromUrl } from "rison";
+import { compressToUrl, decompressFromUrl } from "@effective/rison";
 
 const compact = compressToUrl({ page: 1, filters: { active: true } });
 // -> safe, compact string for query params/fragments
@@ -55,9 +55,9 @@ const value = decompressFromUrl(compact);
 ## Installation
 
 ```
-pnpm add rison
+pnpm add @effective/rison
 # or
-npm i rison
+npm i @effective/rison
 ```
 
 ## Requirements
