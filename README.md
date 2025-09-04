@@ -277,7 +277,7 @@ Copyright © 2007–2009 Metaweb Technologies, Inc.
 - Maintained in Germany; originally created by Metaweb Technologies (Google).
 
 
-Modernization and maintenance © 2024–present, Maintainers in Germany.
+Modernization and maintenance © 2024–present, Sebastian Software GmbH, Germany.
 
 `${r}`
 
