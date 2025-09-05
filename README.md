@@ -20,12 +20,10 @@
   </a>
 </p>
 
-Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures.
+Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures. Based on [Rison (Original)](https://github.com/Nanonid/rison).
 
 Rison is a slight variation of JSON that looks vastly superior after URI encoding — great for
 storing compact state in URLs while expressing the same data structures as JSON.
-
-Original project: https://github.com/Nanonid/rison
 
 ## Why Rison for URLs
 
@@ -36,22 +34,14 @@ Original project: https://github.com/Nanonid/rison
 
 ## Quick Start
 
-ESM usage (Node 22+ or a bundler):
-
 ```js
-import { encode, decode, encodeObject, encodeArray } from "@effective/rison";
+import { encode, decode } from "@effective/rison";
 
 encode({ any: "json", yes: true });
 // -> (any:json,yes:!t)
 
 decode("(any:json,yes:!t)");
 // -> { any: 'json', yes: true }
-
-encodeObject({ supportsObjects: true, ints: 435 });
-// -> ints:435,supportsObjects:!t
-
-encodeArray(["A", "B", { supportsObjects: true }]);
-// -> A,B,(supportsObjects:!t)
 ```
 
 Optional URL compression helpers (native CompressionStream in modern browsers):
@@ -79,7 +69,7 @@ const value = await decompressFromUrl(compact);
 ```
 pnpm add @effective/rison
 # or
-npm i @effective/rison
+npm install @effective/rison
 ```
 
 ## Requirements
@@ -91,10 +81,8 @@ npm i @effective/rison
 
 - `encode(value)` → string
 - `decode(string)` → any
-- `encodeObject(object)` → string (without surrounding parentheses)
-- `encodeArray(array)` → string (without surrounding `!()`)
 - `encodeUri(value)` → string (Rison-encode + relaxed URI escaping)
-- `compressToUrl(value)` → string (Rison-encode + lz-string compress to URI component)
+- `compressToUrl(value, { mode })` → string (Rison-encode + compression; see below)
 - `decompressFromUrl(string)` → any (reverse of `compressToUrl`)
 
 Types are published via `dist/rison.d.ts`.
@@ -132,17 +120,7 @@ export function Example() {
 }
 ```
 
-Compressed variant (smaller URLs) using `lz-string`:
-
-```tsx
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
-import { encode, decode } from "@effective/rison";
-
-const risonCompressed = {
-  parse: (value: string) => decode(decompressFromEncodedURIComponent(value) ?? ""),
-  serialize: (value: unknown) => compressToEncodedURIComponent(encode(value))
-};
-```
+Compression helpers are async and not suitable for nuqs serializers; if you need compression with nuqs, use a custom async layer outside of serializer calls.
 
 For smaller URLs, use the compressed variant above.
 
@@ -264,69 +242,11 @@ angle brackets: `<http://...>` which some mail readers have better luck with.
 
 **Compactness** is important because of implementation limits on URI length. Internet Explorer is once again the weakest link at 2K. One could certainly invent a more compact representation by dropping the human-readable constraint and using a compression algorithm.
 
-## Variations
-
-There are several variations on Rison which are useful or at least thought-
-provoking.
-
-#### O-Rison
-
-When you know the parameter being encoded will always be an object, always
-wrapping it in a containing `()` is unnecessary and hard to explain. Until
-you've dealt with nested structures, the need for parentheses is hard to
-explain. In this case you may wish to declare that the argument is encoded in
-_O-Rison_, which can be translated to Rison by wrapping it in parentheses.
-
-Here's a URI with a single query argument which is a nested structure:
-`http://example.com/service?query=(q:'*',start:10,count:10)`
-
-This is more legible if you specify that the argument is O-Rison instead of
-Rison, and leave the containing `()` as implied:
-`http://example.com/service?query=q:'*',start:10,count:10`
-
-This seems to be useful in enough situations that it is worth defining the
-term _O-Rison_.
-
-#### A-Rison
-
-Similarly, sometimes you know the value will always be an array. Instead of
-specifying a Rison argument: `.../?items=!(item1,item2,item3)` you can specify
-the far more legible A-Rison argument: `.../?items=item1,item2,item3`
-
-#### Accepting other delimiters
-
-Notice that O-Rison looks almost like a drop-in replacement for [ URL form
-encoding](http://www.w3.org/TR/html4/interact/forms.html#form-content-type),
-with two substitutions:
-
-- "`:`" for "`=`"
-- "`,`" for "`&`"
-
-We could expand the Rison parser to treat all of "`,`", "`&`", and "`;`" as
-valid item separators and both "`:`" and "`=`" as key-value separators. In
-this case the vast majority of URI queries would form a flat subset of
-O-Rison. The exceptions are services that depend on ordering of query
-parameters or allow duplicate parameter names.
-
-This extension doesn't change the parsing of standard Rison strings because
-"`&`", "`=`", and "`;`" are already illegal in Rison identifiers.
-
-## Examples
-
-See Quick Start above for typical usage. For more complex cases, check the tests in `src/*.spec.ts`.
-
 ## Contributing
 
 - Run tests: `pnpm test`
 - Typecheck: `pnpm run typecheck`
 - Format: `pnpm run format`
-
-## License
-
-MIT — see [LICENSE.md](./LICENSE.md).
-
-Copyright © 2007–2009 Metaweb Technologies, Inc.
-Copyright © 2024–present, Sebastian Software GmbH, Germany.
 
 ## Releasing
 
@@ -339,6 +259,13 @@ pnpm run release
 
 This runs typecheck/tests, builds, bumps the version, publishes to npm (public), tags the release,
 and publishes a GitHub Release.
+
+## License
+
+MIT — see [LICENSE.md](./LICENSE.md).
+
+- Copyright © 2007–2009 Metaweb Technologies, Inc.
+- Copyright © 2024–present, Sebastian Software GmbH, Germany.
 
 ## Acknowledgments
 

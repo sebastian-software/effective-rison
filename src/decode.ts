@@ -15,13 +15,4 @@ export function decode(input: string): any {
 /**
  * Parse an o-rison string by wrapping it in parentheses before decoding.
  */
-export function decodeObject(input: string): any {
-  return decode("(" + input + ")");
-}
-
-/**
- * Parse an a-rison string by prefixing with !() before decoding.
- */
-export function decodeArray(input: string): any {
-  return decode("!(" + input + ")");
-}
+// Legacy O-/A-Rison helpers removed to keep API focused on standard Rison.

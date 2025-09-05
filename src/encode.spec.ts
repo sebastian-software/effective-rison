@@ -1,9 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { encode, encodeObject, encodeArray, encodeUri } from "./rison";
+import { encode, encodeUri } from "./rison";
 
 describe("encode", () => {
   it("sorts object keys lexicographically", () => {
-    expect(encodeObject({ b: 1, a: 2 })).toBe("a:2,b:1");
     expect(encode({ b: 1, a: 2 })).toBe("(a:2,b:1)");
   });
 
@@ -22,8 +21,6 @@ describe("encode", () => {
   });
 
   it("encodes empty structures compactly", () => {
-    expect(encodeArray([])).toBe("");
-    // encodeArray returns inner without !() per API; full array is encode([])
     expect(encode([])).toBe("!()");
     expect(encode({})).toBe("()");
   });

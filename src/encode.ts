@@ -101,21 +101,7 @@ export function encode(v: RisonEncodable): string {
  * Encode an object without the surrounding parentheses.
  * Throws if provided value is not a plain object.
  */
-export function encodeObject(v: Record<string, any>): string {
-  if (typeof v !== "object" || v === null || Array.isArray(v)) throw new Error("rison.encodeObject expects an object argument");
-  const rendered = serializers.object(v) as string;
-  return rendered.substring(1, rendered.length - 1);
-}
-
-/**
- * Encode an array without the surrounding !() markers.
- * Throws if provided value is not an array.
- */
-export function encodeArray(v: any[]): string {
-  if (!Array.isArray(v)) throw new Error("rison.encodeArray expects an array argument");
-  const rendered = serializers.array(v) as string;
-  return rendered.substring(2, rendered.length - 1);
-}
+// Note: legacy O-/A-Rison helpers were removed to keep the API focused.
 
 /**
  * Encode a value and make it URL-friendly by applying a relaxed escaping.
