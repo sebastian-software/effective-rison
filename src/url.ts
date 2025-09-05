@@ -17,6 +17,12 @@ function fromBase64Url(s: string): Uint8Array {
   return out;
 }
 
+function viewToArrayBuffer(view: Uint8Array): ArrayBuffer {
+  const { buffer, byteOffset, byteLength } = view;
+  if (byteOffset === 0 && byteLength === buffer.byteLength) return buffer as ArrayBuffer;
+  return buffer.slice(byteOffset, byteOffset + byteLength) as ArrayBuffer;
+}
+
 /**
  * Compress a value for safe, compact URL usage: Rison-encode then gzip via CompressionStream
  * and encode as base64url (URL-safe, no padding).
@@ -25,9 +31,9 @@ export type CompressionMode = 'auto' | 'gzip' | 'deflate' | 'none';
 
 async function compressWith(kind: 'gzip' | 'deflate', rison: string): Promise<string> {
   const input = new TextEncoder().encode(rison);
-  const algo = kind === 'gzip' ? 'gzip' : 'deflate-raw';
+  const algo = kind === 'gzip' ? 'gzip' : 'deflate';
   const compressed = await new Response(
-    new Blob([input]).stream().pipeThrough(new (globalThis as any).CompressionStream(algo))
+    new Blob([viewToArrayBuffer(input)]).stream().pipeThrough(new CompressionStream(algo))
   ).arrayBuffer();
   const b64url = toBase64Url(new Uint8Array(compressed));
   // Prefix both gzip and deflate; raw (no prefix) means no compression
@@ -57,7 +63,7 @@ export async function decompressFromUrl(token: string): Promise<RisonValue> {
     const b64 = token.slice(2);
     const bytes = fromBase64Url(b64);
     const buf = await new Response(
-      new Blob([bytes]).stream().pipeThrough(new (globalThis as any).DecompressionStream('gzip'))
+      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream('gzip'))
     ).arrayBuffer();
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
@@ -66,7 +72,7 @@ export async function decompressFromUrl(token: string): Promise<RisonValue> {
     const b64 = token.slice(2);
     const bytes = fromBase64Url(b64);
     const buf = await new Response(
-      new Blob([bytes]).stream().pipeThrough(new (globalThis as any).DecompressionStream('deflate-raw'))
+      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream('deflate'))
     ).arrayBuffer();
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
