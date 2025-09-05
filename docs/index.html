@@ -28,8 +28,8 @@
     </header>
     <main class="grid">
       <section>
-        <h2>Source (editable)</h2>
-        <textarea id="source" spellcheck="false" aria-label="Source JSON or JS value">{
+        <label for="source">Source (editable)</label>
+        <textarea id="source" spellcheck="false" wrap="off">{
   "tableId": "orders",
   "pagination": { "page": 7, "pageSize": 50 },
   "sorting": [
@@ -59,13 +59,13 @@
         <div class="meta"><span id="sourceMeta">Characters: 0</span></div>
       </section>
       <section>
-        <h2>Converted (Rison)</h2>
-        <textarea id="converted" readonly aria-label="Rison output"></textarea>
+        <label for="converted">Converted (Rison)</label>
+        <textarea id="converted" readonly wrap="off"></textarea>
         <div class="meta"><span id="convertedMeta">Characters: 0 • Compression: 0%</span></div>
       </section>
       <section>
-        <h2>Restored (read-only)</h2>
-        <textarea id="restored" readonly aria-label="Restored value"></textarea>
+        <label for="restored">Restored (read-only)</label>
+        <textarea id="restored" readonly wrap="off"></textarea>
       </section>
     </main>
     <footer>
