@@ -6,7 +6,11 @@ import { base32768Encode, base32768Decode } from "./base32768";
 // Standard Base64 helpers (not URL-safe, includes + / and padding =)
 function toBase64(bytes: Uint8Array): string {
   let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+
+  for (let i = 0; i < bytes.length; i++) {
+    bin += String.fromCharCode(bytes[i]);
+  }
+
   return typeof btoa === "function" ? btoa(bin) : Buffer.from(bytes).toString("base64");
 }
 
@@ -15,13 +19,21 @@ function fromBase64(s: string): Uint8Array {
   const padded = s.endsWith("=") ? s : s + "===".slice((s.length + 3) % 4);
   const bin = typeof atob === "function" ? atob(padded) : Buffer.from(padded, "base64").toString("binary");
   const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+
+  for (let i = 0; i < bin.length; i++) {
+    out[i] = bin.charCodeAt(i);
+  }
+
   return out;
 }
 
 function viewToArrayBuffer(view: Uint8Array): ArrayBuffer {
   const { buffer, byteOffset, byteLength } = view;
-  if (byteOffset === 0 && byteLength === buffer.byteLength) return buffer as ArrayBuffer;
+
+  if (byteOffset === 0 && byteLength === buffer.byteLength) {
+    return buffer as ArrayBuffer;
+  }
+
   return buffer.slice(byteOffset, byteOffset + byteLength) as ArrayBuffer;
 }
 
@@ -50,18 +62,37 @@ export async function compressForStorage(
   const mode = options?.mode ?? 'auto';
   const encoding: StorageEncoding = options?.encoding ?? 'base32768';
   const r = encode(value);
-  if (mode === 'none') return r;
-  if (mode === 'gzip') return await compressWith('gzip', r, encoding);
-  if (mode === 'deflate') return await compressWith('deflate', r, encoding);
+
+  if (mode === 'none') {
+    return r;
+  }
+
+  if (mode === 'gzip') {
+    return await compressWith('gzip', r, encoding);
+  }
+
+  if (mode === 'deflate') {
+    return await compressWith('deflate', r, encoding);
+  }
+
   // auto: skip compression for tiny payloads; otherwise choose shortest of raw/gzip/deflate
-  if (r.length < 100) return r;
+  if (r.length < 100) {
+    return r;
+  }
+
   const [gz, df] = await Promise.all([
     compressWith('gzip', r, encoding),
     compressWith('deflate', r, encoding)
   ]);
   const candidates = [r, gz, df];
   let best = candidates[0];
-  for (const c of candidates) if (c.length < best.length) best = c;
+
+  for (const c of candidates) {
+    if (c.length < best.length) {
+      best = c;
+    }
+  }
+
   return best;
 }
 
@@ -73,6 +104,7 @@ export async function decompressFromStorage(
   options?: { encoding?: StorageEncoding }
 ): Promise<RisonValue> {
   const encoding: StorageEncoding = options?.encoding ?? 'base32768';
+
   if (token.startsWith('g:')) {
     const data = token.slice(2);
     const bytes = encoding === 'base32768' ? base32768Decode(data) : fromBase64(data);
@@ -82,6 +114,7 @@ export async function decompressFromStorage(
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
   }
+
   if (token.startsWith('d:')) {
     const data = token.slice(2);
     const bytes = encoding === 'base32768' ? base32768Decode(data) : fromBase64(data);
@@ -91,6 +124,7 @@ export async function decompressFromStorage(
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
   }
+
   return decode(token);
 }
 
@@ -103,7 +137,10 @@ export async function saveToLocalStorage(
   options?: { mode?: CompressionMode; encoding?: StorageEncoding }
 ) {
   // eslint-disable-next-line no-undef
-  if (typeof localStorage === 'undefined') throw new Error('localStorage is not available in this environment');
+  if (typeof localStorage === 'undefined') {
+    throw new Error('localStorage is not available in this environment');
+  }
+
   const token = await compressForStorage(value, options);
   // eslint-disable-next-line no-undef
   localStorage.setItem(key, token);
@@ -114,9 +151,15 @@ export async function loadFromLocalStorage(
   options?: { encoding?: StorageEncoding }
 ): Promise<RisonValue | null> {
   // eslint-disable-next-line no-undef
-  if (typeof localStorage === 'undefined') throw new Error('localStorage is not available in this environment');
+  if (typeof localStorage === 'undefined') {
+    throw new Error('localStorage is not available in this environment');
+  }
   // eslint-disable-next-line no-undef
   const token = localStorage.getItem(key);
-  if (token == null) return null;
+
+  if (token == null) {
+    return null;
+  }
+
   return await decompressFromStorage(token, options);
 }

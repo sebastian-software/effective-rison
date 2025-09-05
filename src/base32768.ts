@@ -4,21 +4,34 @@
 function valToSafeCodePoint(v: number): number {
   // v in [0, 32767]
   // Map to code points [0x0000..0xD7FF] U [0xE000..0xE7FF]
-  return v >= 0xD800 ? v + 0x800 : v;
+  if (v >= 0xD800) {
+    return v + 0x800;
+  }
+
+  return v;
 }
 
 function safeCodePointToVal(cp: number): number {
-  if (cp >= 0xD800 && cp <= 0xDFFF) throw new Error("Invalid surrogate in base32768 string");
-  return cp >= 0xE000 && cp <= 0xE7FF ? cp - 0x800 : cp;
+  if (cp >= 0xD800 && cp <= 0xDFFF) {
+    throw new Error("Invalid surrogate in base32768 string");
+  }
+
+  if (cp >= 0xE000 && cp <= 0xE7FF) {
+    return cp - 0x800;
+  }
+
+  return cp;
 }
 
 export function base32768Encode(bytes: Uint8Array): string {
   let b = 0;
   let n = 0;
   let out = "";
+
   for (let i = 0; i < bytes.length; i++) {
     b |= bytes[i] << n;
     n += 8;
+
     while (n >= 15) {
       const v = b & 0x7FFF; // 15 bits
       b >>= 15;
@@ -26,10 +39,12 @@ export function base32768Encode(bytes: Uint8Array): string {
       out += String.fromCharCode(valToSafeCodePoint(v));
     }
   }
+
   if (n > 0) {
     const v = b & 0x7FFF; // remaining < 15 bits, zero-padded implicitly
     out += String.fromCharCode(valToSafeCodePoint(v));
   }
+
   return out;
 }
 
@@ -37,11 +52,13 @@ export function base32768Decode(s: string): Uint8Array {
   let b = 0;
   let n = 0;
   const out: number[] = [];
+
   for (let i = 0; i < s.length; i++) {
     const cp = s.charCodeAt(i);
     const v = safeCodePointToVal(cp);
     b |= v << n;
     n += 15;
+
     while (n >= 8) {
       out.push(b & 0xff);
       b >>= 8;
@@ -51,4 +68,3 @@ export function base32768Decode(s: string): Uint8Array {
   // leftover bits (< 8) are padding; discard
   return new Uint8Array(out);
 }
-

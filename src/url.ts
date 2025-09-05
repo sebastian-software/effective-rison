@@ -5,7 +5,10 @@ import type { RisonValue } from "./parser";
 // Base64url helpers
 function toBase64Url(bytes: Uint8Array): string {
   let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < bytes.length; i++) {
+    bin += String.fromCharCode(bytes[i]);
+  }
+
   const b64 = typeof btoa === "function" ? btoa(bin) : Buffer.from(bytes).toString("base64");
   return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
@@ -13,13 +16,19 @@ function fromBase64Url(s: string): Uint8Array {
   const padded = s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4);
   const bin = typeof atob === "function" ? atob(padded) : Buffer.from(padded, "base64").toString("binary");
   const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  for (let i = 0; i < bin.length; i++) {
+    out[i] = bin.charCodeAt(i);
+  }
+
   return out;
 }
 
 function viewToArrayBuffer(view: Uint8Array): ArrayBuffer {
   const { buffer, byteOffset, byteLength } = view;
-  if (byteOffset === 0 && byteLength === buffer.byteLength) return buffer as ArrayBuffer;
+  if (byteOffset === 0 && byteLength === buffer.byteLength) {
+    return buffer as ArrayBuffer;
+  }
+
   return buffer.slice(byteOffset, byteOffset + byteLength) as ArrayBuffer;
 }
 
@@ -43,15 +52,29 @@ async function compressWith(kind: 'gzip' | 'deflate', rison: string): Promise<st
 export async function compressToUrl(value: RisonValue, options?: { mode?: CompressionMode }): Promise<string> {
   const mode = options?.mode ?? 'auto';
   const r = encode(value);
-  if (mode === 'none') return r;
-  if (mode === 'gzip') return compressWith('gzip', r);
-  if (mode === 'deflate') return compressWith('deflate', r);
+  if (mode === 'none') {
+    return r;
+  }
+
+  if (mode === 'gzip') {
+    return compressWith('gzip', r);
+  }
+
+  if (mode === 'deflate') {
+    return compressWith('deflate', r);
+  }
   // auto: try both gzip and deflate, and compare with raw Rison; pick shortest
-  if (r.length < 100) return r; // early exit for tiny payloads
+  if (r.length < 100) {
+    return r; // early exit for tiny payloads
+  }
   const [gz, df] = await Promise.all([compressWith('gzip', r), compressWith('deflate', r)]);
   const candidates = [r, gz, df];
   let best = candidates[0];
-  for (const c of candidates) if (c.length < best.length) best = c;
+  for (const c of candidates) {
+    if (c.length < best.length) {
+      best = c;
+    }
+  }
   return best;
 }
 
@@ -68,6 +91,7 @@ export async function decompressFromUrl(token: string): Promise<RisonValue> {
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
   }
+
   if (token.startsWith('d:')) {
     const b64 = token.slice(2);
     const bytes = fromBase64Url(b64);
