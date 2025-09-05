@@ -5,6 +5,7 @@
   <a href="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
   <img alt="Types Included" src="https://img.shields.io/badge/Types-Included-3178c6?logo=typescript">
+  <img alt="Zero Dependencies" src="https://img.shields.io/badge/Dependencies-None-2ea44f">
   <img alt="Module" src="https://img.shields.io/badge/ESM-Only-000">
   <img alt="Node" src="https://img.shields.io/badge/node-22%2B-339933?logo=node.js">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-10+-F69220?logo=pnpm">
