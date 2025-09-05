@@ -8,6 +8,7 @@
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "build": "tsc -p tsconfig.build.json",
+    "build:demo": "vite build",
     "prepublishOnly": "pnpm run build",
     "release": "release-it"
   },
@@ -37,6 +38,8 @@
   },
   "devDependencies": {
     "prettier": "^3.6.2",
+    "vite": "^5.4.8",
+    "vite-plugin-singlefile": "^0.13.5",
     "release-it": "^19.0.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

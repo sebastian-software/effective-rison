@@ -35,16 +35,11 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Build dist
+      - name: Build library
         run: pnpm run build
 
-      - name: Prepare site folder
-        run: |
-          rm -rf site
-          mkdir -p site
-          cp -R docs/* site/
-          mkdir -p site/dist
-          cp -R dist/* site/dist/
+      - name: Build demo (Vite single-file)
+        run: pnpm run build:demo
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
