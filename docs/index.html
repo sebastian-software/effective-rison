@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rison Demo — @effective/rison</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>@effective/rison Demo</h1>
+      <p>Live encoding/decoding — Source → Converted → Restored</p>
+      <p>
+        Repo: <a href="https://github.com/sebastian-software/effective-rison" target="_blank" rel="noreferrer">sebastian-software/effective-rison</a>
+      </p>
+    </header>
+    <main class="grid">
+      <section>
+        <h2>Source (editable)</h2>
+        <textarea id="source" spellcheck="false" aria-label="Source JSON or JS value">{"any":"json","yes":true}</textarea>
+      </section>
+      <section>
+        <h2>Converted (Rison)</h2>
+        <textarea id="converted" readonly aria-label="Rison output"></textarea>
+      </section>
+      <section>
+        <h2>Restored (read-only)</h2>
+        <textarea id="restored" readonly aria-label="Restored value"></textarea>
+      </section>
+    </main>
+    <footer>
+      <small>TypeScript-first, ESM-only. © Sebastian Software GmbH.</small>
+    </footer>
+    <script type="module" src="./app.js"></script>
+  </body>
+  </html>
+
