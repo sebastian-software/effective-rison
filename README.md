@@ -47,15 +47,23 @@ encodeArray(["A", "B", { supportsObjects: true }]);
 // -> A,B,(supportsObjects:!t)
 ```
 
-Optional URL compression helpers (native gzip via CompressionStream in modern browsers):
+Optional URL compression helpers (native CompressionStream in modern browsers):
 
 ```js
 import { compressToUrl, decompressFromUrl } from "@effective/rison";
 
-const compact = await compressToUrl({ page: 1, filters: { active: true } });
+// mode: 'auto' | 'gzip' | 'deflate' | 'none' (default: 'auto')
+const compact = await compressToUrl({ page: 1, filters: { active: true } }, { mode: 'auto' });
 // -> safe, compact string for query params/fragments
 
 const value = await decompressFromUrl(compact);
+
+### Compression formats & prefixes
+
+- `none`: returns raw Rison (no prefix)
+- `gzip`: returns a token prefixed with `g:` and base64url‑encoded
+- `deflate`: returns a token prefixed with `d:` and base64url‑encoded
+- `auto`: compresses with both gzip and deflate and picks the shortest among raw/gzip/deflate
 // -> original value
 ```
 
@@ -86,7 +94,9 @@ Types are published via `dist/rison.d.ts`.
 
 ## Demos & Examples
 
-- Live demo: GitHub Pages (3-pane source → converted → restored) — enabled via Actions.
+- Live demo: 3‑pane source → converted → restored
+  - Radio options for compression: auto, gzip, deflate, none
+  - Three presets (Short/Medium/Long) to test compression impact
 
 ## Nuqs Integration
 

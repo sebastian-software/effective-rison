@@ -23,7 +23,15 @@
     </header>
     <main class="grid">
       <section>
-        <label for="source">Source (editable)</label>
+        <div class="label-row">
+          <label for="source">Source (editable)</label>
+          <div class="meta-inline"><span id="sourceWarn" class="warn"></span><span id="sourceMeta">Characters: 0</span></div>
+        </div>
+        <div class="preset-buttons">
+          <button id="btnShort" type="button">Short</button>
+          <button id="btnMedium" type="button">Medium</button>
+          <button id="btnLong" type="button">Long</button>
+        </div>
         <textarea id="source" spellcheck="false" wrap="off">{
   "tableId": "orders",
   "pagination": { "page": 7, "pageSize": 50 },
@@ -54,9 +62,11 @@
         <div class="meta"><span id="sourceMeta">Characters: 0</span><span id="sourceWarn" class="warn"></span></div>
       </section>
       <section>
-        <label for="converted">Converted (Rison)</label>
+        <div class="label-row">
+          <label for="converted">Converted (Rison)</label>
+          <div class="meta-inline"><span id="convertedMeta">Characters: 0 • Compression: 0%</span></div>
+        </div>
         <textarea id="converted" readonly wrap="soft"></textarea>
-        <div class="meta"><span id="convertedMeta">Characters: 0 • Compression: 0%</span></div>
       </section>
       <section>
         <label for="restored">Restored (read-only)</label>

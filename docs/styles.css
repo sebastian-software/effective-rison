@@ -21,6 +21,11 @@ header p { margin: 0.2rem 0; color: var(--muted); }
 header .controls { margin: 8px auto; display: inline-flex; align-items: center; gap: 12px; background: #0b0d12; border: 1px solid #232737; padding: 6px 10px; border-radius: 999px; }
 header .controls label { cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 6px; }
 header .controls .controls-label { color: var(--muted); margin-right: 4px; }
+section .label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+section .meta-inline { color: var(--muted); font-size: 12px; display: inline-flex; gap: 10px; }
+section .preset-buttons { display: inline-flex; gap: 8px; margin: 6px 0 8px; }
+section .preset-buttons button { background: #0f1115; color: var(--text); border: 1px solid #232737; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+section .preset-buttons button:hover { border-color: var(--accent); }
 main.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
