@@ -72,18 +72,19 @@ pnpm add @effective/rison
 npm install @effective/rison
 ```
 
-## Requirements
+## Requirements & Support
 
-- Node.js 22+ (ESM-only package)
-- pnpm or npm (pnpm recommended)
+- Browsers: modern engines support CompressionStream/DecompressionStream.
+- Node.js: 20+ provides CompressionStream in runtime; this repo builds/tests on Node 22+.
+- ESM-only package.
 
 ## API
 
 - `encode(value)` → string
 - `decode(string)` → any
 - `encodeUri(value)` → string (Rison-encode + relaxed URI escaping)
-- `compressToUrl(value, { mode })` → string (Rison-encode + compression; see below)
-- `decompressFromUrl(string)` → any (reverse of `compressToUrl`)
+- `compressToUrl(value, { mode })` → Promise<string>
+- `decompressFromUrl(string)` → Promise<any>
 
 Types are published via `dist/rison.d.ts`.
 
@@ -126,121 +127,9 @@ For smaller URLs, use the compressed variant above.
 
 ## Breaking changes in v1
 
-- ESM-only package (`"type": "module"`), Node 22+ recommended.
+- ESM-only package, Node 22+ recommended.
 - Removed default export; use named imports.
-- Removed snake_case API; use camelCase (`encodeObject`, `encodeArray`, `encodeUri`, `decodeObject`, `decodeArray`).
-
-## Why another data serialization format?
-
-Rison is intended to meet the following goals, in roughly this order:
-
-1. Comply with [URI specifications](http://gbiv.com/protocols/uri/rfc/rfc3986.html) and usage
-2. Express **nested** data structures
-3. Be **human-readable**
-4. Be **compact**
-   Rison is necessary because the obvious alternatives fail to meet these goals:
-
-- URI-encoded XML and JSON are illegible and inefficient.
-- [HTML Form encoding](http://www.w3.org/TR/html4/interact/forms.html#form-content-type) rules the web but can only represent a flat list of string pairs.
-- Ian Bicking's [FormEncode](http://formencode.org/) package includes the [variabledecode](http://formencode.org/Validator.html#id16) parser, an interesting convention for form encoding that allows nested lists and dictionaries. However, it becomes inefficient with deeper nesting, and allows no terminal datatypes except strings.
-
-Note that these goals are shaped almost entirely by the constraints of URIs,
-though Rison has turned out to be useful in command-line tools as well. In the
-_body_ of an HTTP request or response, length is less critical and URI
-encoding can be avoided, so JSON would usually be preferred to Rison.
-
-Given that a new syntax is needed, Rison tries to innovate as little as
-possible:
-
-- It uses the same data model as, and a very similar syntax to [JSON](http://json.org). The Rison grammar is only a slight alteration of the JSON grammar.
-- It introduces very little additional quoting, since we assume that URI encoding will be applied on top of the Rison encoding.
-
-## Differences from JSON syntax
-
-- no whitespace is permitted except inside quoted strings (by default).
-- almost all character escaping is left to the uri encoder.
-- single-quotes are used for quoting, but quotes can and should be left off strings when the strings are simple identifiers.
-- the `e+` exponent format is forbidden, since `+` is not safe in form values and the plain `e` format is equivalent.
-- the `E`, `E+`, and `E` exponent formats are removed.
-- object keys should be lexically sorted when encoding. the intent is to improve url cacheability.
-- uri-safe tokens are used in place of the standard json tokens:
-
-Token mapping (Rison → JSON): `'` → `"` (string quote), `!` → `\\` (escape), `(...)` → `{...}` (object),
-`!(...)` → `[...]` (array)
-
-- the JSON literals that look like identifiers (`true`, `false` and `null`) are represented as `!` sequences:
-
-Literals: `!t` (true), `!f` (false), `!n` (null)
-
-The `!` character plays two similar but different roles, as an escape
-character within strings, and as a marker for special values. This may be
-confusing.
-
-Notice that services can distinguish Rison-encoded strings from JSON-encoded
-strings by checking the first character. Rison structures start with `(` or
-`!(`. JSON structures start with `[` or `{`. This means that a service which
-expects a JSON encoded object or array can accept Rison-encoded objects
-without loss of compatibility.
-
-## Interaction with URI %-encoding
-
-Rison syntax is designed to produce strings that be legible after being [form-
-encoded](http://www.w3.org/TR/html4/interact/forms.html#form-content-type) for
-the [query](http://gbiv.com/protocols/uri/rfc/rfc3986.html#query) section of a
-URI. None of the characters in the Rison syntax need to be URI encoded in that
-context, though the data itself may require URI encoding. Rison tries to be
-orthogonal to the %-encoding process - it just defines a string format that
-should survive %-encoding with very little bloat. Rison quoting is only
-applied when necessary to quote characters that might otherwise be interpreted
-as special syntax.
-
-Note that most URI encoding libraries are very conservative, percent-encoding
-many characters that are legal according to [RFC
-3986](http://gbiv.com/protocols/uri/rfc/rfc3986.html). For example,
-Javascript's builtin `encodeURIComponent()` will still make Rison
-strings difficult to read. The rison.js library includes a more tolerant URI
-encoder.
-
-Rison uses its own quoting for strings, using the single quote (`**'**`) as a
-string delimiter and the exclamation point (`**!**`) as the string escape
-character. Both of these characters are legal in uris. Rison quoting is
-largely inspired by Unix shell command line parsing.
-
-All Unicode characters other than `**'**` and `**!**` are legal inside quoted
-strings. This includes newlines and control characters. Quoting all such
-characters is left to the %-encoding process.
-
-### Interaction with IRIs
-
-This still needs to be addressed. Advice from an IRI expert would be very
-welcome.
-
-Particular attention should be paid to Unicode characters that may be
-interpreted as Rison syntax characters.
-
-The _idchars_ set is hard to define well. The goal is to include foreign
-language alphanumeric characters and some punctuation that is common in
-identifiers ("`_`", "`-`", "`.`", "`/`", and others). However, whitespace and
-most punctuation characters should require quoting.
-
-## Emailing URIs
-
-Most text emailers are conservative about what they turn into a hyperlink, and
-they will assume that characters like '(' mean the end of the URI. This
-results in broken, truncated links.
-
-This is actually a problem with URI encoding rather than with Rison, but it
-comes up a lot in practice. You could use Rison with a more aggressive URI
-encoder to generate emailable URIs. You can also wrap your emailed URIs in
-angle brackets: `<http://...>` which some mail readers have better luck with.
-
-## Further Rationale
-
-**Passing data in URIs** is necessary in many situations. Many web services rely on the HTTP GET method, which can take advantage of an extensive deployed caching infrastructure. Browsers also have different capabilities for GET, including the crucial ability to make cross-site requests. It is also very convenient to store the state of a small browser application in the URI.
-
-**Human readability** makes everything go faster. Primarily this means avoiding URI encoding whenever possible. This requires careful choice of characters for the syntax, and a tolerant URI encoder that only encodes characters when absolutely necessary.
-
-**Compactness** is important because of implementation limits on URI length. Internet Explorer is once again the weakest link at 2K. One could certainly invent a more compact representation by dropping the human-readable constraint and using a compression algorithm.
+- Removed legacy O-/A-Rison helpers; use `encode`/`decode` only.
 
 ## Contributing
 
