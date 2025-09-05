@@ -20,10 +20,10 @@
   </a>
 </p>
 
-Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures. Based on [Rison (Original)](https://github.com/Nanonid/rison).
+Modern, TypeScript-first, ESM-only Rison: compact serialization for JSON-like structures — great for URLs and for compact storage. Based on [Rison (Original)](https://github.com/Nanonid/rison).
 
-Rison is a slight variation of JSON that looks vastly superior after URI encoding — great for
-storing compact state in URLs while expressing the same data structures as JSON.
+Rison is a slight variation of JSON that looks vastly superior after URI encoding — ideal for
+compact state in URLs and also useful for storing structured data in `localStorage`/`sessionStorage`.
 
 ## Why Rison for URLs
 
@@ -64,6 +64,32 @@ const value = await decompressFromUrl(compact);
 // -> original value
 ```
 
+## Storage (localStorage) Usage
+
+For storage, URL compatibility isn’t required. This library offers high‑density UTF‑16 packing (Base32768‑like) that maps 15‑bit chunks to non‑surrogate code points, giving better density than base64. Storage helpers default to `base32768` and keep the same compression prefixes.
+
+```js
+import { compressForStorage, decompressFromStorage } from "@effective/rison";
+
+// mode: 'auto' | 'gzip' | 'deflate' | 'none' (default: 'auto')
+// encoding: 'base32768' | 'base64' (default: 'base32768')
+const token = await compressForStorage({ theme: 'dark', tabs: [1, 2, 3] }, { encoding: 'base32768' });
+// store in localStorage yourself
+localStorage.setItem('app:state', token);
+
+// later…
+const restored = await decompressFromStorage(localStorage.getItem('app:state')!, { encoding: 'base32768' });
+```
+
+Convenience wrappers are also available if you prefer direct storage calls:
+
+```js
+import { saveToLocalStorage, loadFromLocalStorage } from "@effective/rison";
+
+await saveToLocalStorage('app:state', { theme: 'dark' }, { encoding: 'base32768' });
+const state = await loadFromLocalStorage('app:state', { encoding: 'base32768' });
+```
+
 ## Installation
 
 ```
@@ -85,6 +111,14 @@ npm install @effective/rison
 - `encodeUri(value)` → string (Rison-encode + relaxed URI escaping)
 - `compressToUrl(value, { mode })` → Promise<string>
 - `decompressFromUrl(string)` → Promise<any>
+- `compressForStorage(value, { mode, encoding })` → Promise<string>
+- `decompressFromStorage(string, { encoding })` → Promise<any>
+- `saveToLocalStorage(key, value, { mode, encoding })` → Promise<void>
+- `loadFromLocalStorage(key, { encoding })` → Promise<any | null>
+
+Notes:
+- Storage encoding defaults to `base32768` for maximum density with simple decoding. You can switch to `base64` for interoperability.
+- Compression prefixes remain the same: `g:` (gzip), `d:` (deflate), or none (raw Rison).
 
 Types are published via `dist/rison.d.ts`.
 
