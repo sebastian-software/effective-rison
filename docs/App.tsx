@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import layout from './styles/Layout.module.css'
-import ui from './styles/Primitives.module.css'
+import layout from './App.module.css'
+import se from './components/SourceEditor.module.css'
 import { encode, decode, compressToUrl, decompressFromUrl, compressForStorage, decompressFromStorage } from '@effective/rison'
 import { Controls } from './components/Controls'
 import { PresetButtons } from './components/PresetButtons'
 import { Panel } from './components/Panel'
 import { ConvertedPanel } from './components/ConvertedPanel'
 import { RestoredPanel } from './components/RestoredPanel'
+import { LinkIcon, StorageIcon, JsonIcon } from './components/icons'
 import { usePresets } from './hooks/usePresets'
 import { useCompressionMeta } from './hooks/useCompressionMeta'
 
@@ -84,7 +85,13 @@ export default function App() {
       }
 
       const r = encode(value)
-      setSourceChars(source.length)
+      try {
+        const minJson = JSON.stringify(JSON.parse(source))
+        setSourceChars(minJson.length)
+      } catch {
+        // Fallback: count non-whitespace characters if not strict JSON
+        setSourceChars(source.replace(/\s+/g, '').length)
+      }
       let nextConvertedUrl = ''
       let nextRestoredUrl = ''
       let nextStorageToken = ''
@@ -141,10 +148,6 @@ export default function App() {
     []
   )
 
-  const Status = ({ ok }: { ok: boolean | null }) => (
-    <span className={`${styles.status} ${ok == null ? '' : ok ? styles.ok : styles.bad}`}>{ok == null ? '—' : ok ? '✓' : '✗'}</span>
-  )
-
   return (
     <div className={layout.page}>
       <header className={layout.header}>
@@ -159,17 +162,17 @@ export default function App() {
       <main className={layout.grid}>
         <Panel
           className={layout.source}
-          title={<label className={ui.title} htmlFor="source">Source JSON</label>}
-          right={<span>Characters: {sourceChars}</span>}
+          title={<label htmlFor="source"><JsonIcon /> Source JSON</label>}
+          right={<span>Characters (minified): {sourceChars}</span>}
         >
           {SourceControls}
-          <textarea id="source" className={ui.textarea} value={source} onChange={(e) => setSource(e.target.value)} spellCheck={false} wrap="off" />
+          <textarea id="source" className={se.textarea} value={source} onChange={(e) => setSource(e.target.value)} spellCheck={false} wrap="off" />
         </Panel>
 
-        <ConvertedPanel id="convertedUrl" title="Converted (URL)" value={convertedUrl} meta={urlMeta} />
+        <ConvertedPanel id="convertedUrl" title={<><LinkIcon /> Converted (URL)</>} value={convertedUrl} meta={urlMeta} />
         <RestoredPanel id="restoredUrl" title="Restored (URL)" value={restoredUrl} ok={urlOk} />
 
-        <ConvertedPanel id="storageToken" title="Converted (Storage)" value={storageToken} meta={storageMeta} />
+        <ConvertedPanel id="storageToken" title={<><StorageIcon /> Converted (Storage)</>} value={storageToken} meta={storageMeta} />
         <RestoredPanel id="storageRestored" title="Restored (Storage)" value={storageRestored} ok={storageOk} />
       </main>
 

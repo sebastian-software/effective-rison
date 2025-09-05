@@ -1,4 +1,4 @@
-import ui from '../styles/Primitives.module.css'
+import ui from './Status.module.css'
 
 export function Status({ ok }: { ok: boolean | null }) {
   return (

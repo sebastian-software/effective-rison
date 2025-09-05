@@ -1,4 +1,4 @@
-import ui from '../styles/Primitives.module.css'
+import ui from './PresetButtons.module.css'
 
 export function PresetButtons({ onLoad }: { onLoad: (json: string) => void }) {
   return (

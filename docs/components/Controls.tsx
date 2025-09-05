@@ -1,4 +1,4 @@
-import ui from '../styles/Primitives.module.css'
+import ui from './Controls.module.css'
 
 export function Controls({
   mode,

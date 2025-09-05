@@ -1,8 +1,8 @@
-import ui from '../styles/Primitives.module.css'
+import ui from './RestoredPanel.module.css'
 import { Panel } from './Panel'
 import { Status } from './Status'
 
-export function RestoredPanel({ id, title, value, ok }: { id: string; title: string; value: string; ok: boolean | null }) {
+export function RestoredPanel({ id, title, value, ok }: { id: string; title: React.ReactNode; value: string; ok: boolean | null }) {
   return (
     <Panel
       title={

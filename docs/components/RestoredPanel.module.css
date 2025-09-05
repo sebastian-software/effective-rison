@@ -1,0 +1,4 @@
+.textarea { width: 100%; max-width: 100%; box-sizing: border-box; flex: 1; min-height: 0; resize: vertical; background: #0b0d12; color: var(--text); border: 1px solid #232737; border-radius: 8px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 14px; white-space: pre; overflow: auto; }
+.readonly { opacity: 0.9; }
+.statusWrap { display: inline-flex; align-items: center; gap: 8px; }
+

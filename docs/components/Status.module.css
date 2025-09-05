@@ -1,0 +1,4 @@
+.status { font-weight: 700; color: var(--muted); }
+.ok { color: #16a34a; }
+.bad { color: #dc2626; }
+

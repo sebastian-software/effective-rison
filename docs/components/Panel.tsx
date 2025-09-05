@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import ui from '../styles/Primitives.module.css'
+import ui from './Panel.module.css'
 
 export function Panel({
   title,

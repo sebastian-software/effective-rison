@@ -1,0 +1,3 @@
+.controls { margin: 10px auto; display: inline-flex; align-items: center; gap: 14px; background: #0b0d12; border: 1px solid #232737; padding: 8px 12px; border-radius: 999px; }
+.controlsLabel { color: var(--muted); margin-right: 4px; }
+

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import ui from '../styles/Primitives.module.css'
+import ui from './ConvertedPanel.module.css'
 import { Panel } from './Panel'
 
-export function ConvertedPanel({ id, title, value, meta }: { id: string; title: string; value: string; meta: string }) {
+export function ConvertedPanel({ id, title, value, meta }: { id: string; title: React.ReactNode; value: string; meta: string }) {
   const [copied, setCopied] = useState(false)
 
   async function copy() {

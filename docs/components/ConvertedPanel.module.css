@@ -1,0 +1,6 @@
+.textarea { width: 100%; max-width: 100%; box-sizing: border-box; flex: 1; min-height: 0; resize: vertical; background: #0b0d12; color: var(--text); border: 1px solid #232737; border-radius: 8px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 14px; white-space: pre-wrap; word-break: break-all; overflow-wrap: anywhere; overflow: auto; }
+.readonly { opacity: 0.9; }
+.copyButton { margin-left: 8px; font-size: 12px; padding: 5px 10px; border-radius: 8px; background: #0f1115; color: var(--text); border: 1px solid #232737; cursor: pointer; }
+.copyButton:hover { border-color: var(--accent); }
+.copied { color: #16a34a; font-weight: 600; }
+
