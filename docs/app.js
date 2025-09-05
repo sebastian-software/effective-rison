@@ -1,4 +1,6 @@
-import { encode, decode } from "../dist/rison.js";
+// When deployed, this page and the built files live at the same root.
+// Copy step in CI places the build under ./dist, so import from there.
+import { encode, decode } from "./dist/rison.js";
 
 const sourceEl = document.getElementById("source");
 const convertedEl = document.getElementById("converted");
@@ -38,4 +40,3 @@ function update() {
 
 sourceEl.addEventListener("input", update);
 update();
-
