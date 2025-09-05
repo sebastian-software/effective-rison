@@ -50,7 +50,10 @@ function stringifySorted(v: unknown): string {
   return JSON.stringify(sortKeysDeep(v), null, 2);
 }
 
+let updateSeq = 0;
+
 async function update() {
+  const seq = ++updateSeq;
   const raw = sourceEl.value.trim();
   try {
     const value = safeEval(raw);
@@ -61,33 +64,50 @@ async function update() {
       "base32768";
     // Compute uncompressed Rison once to avoid whitespace noise from the source JSON
     const r = encode(value as any);
+    let nextConvertedUrl = "";
+    let nextRestoredUrl = "";
+    let nextStorageToken = "";
+    let nextStorageRestored = "";
+
     if (mode === "none") {
-      convertedUrlEl.value = r;
-      const back = decode(r);
-      restoredUrlEl.value = stringifySorted(back);
+      nextConvertedUrl = r;
+      nextRestoredUrl = stringifySorted(decode(r));
     } else {
       const compressed = await compressToUrl(value as any, { mode });
-      convertedUrlEl.value = compressed;
+      nextConvertedUrl = compressed;
       const back = await decompressFromUrl(compressed);
-      restoredUrlEl.value = stringifySorted(back);
+      nextRestoredUrl = stringifySorted(back);
     }
 
     // Storage token and roundtrip
     if (mode === "none") {
-      storageTokenEl.value = r;
-      storageRestoredEl.value = stringifySorted(decode(r));
+      nextStorageToken = r;
+      nextStorageRestored = stringifySorted(decode(r));
     } else {
       const storageToken = await compressForStorage(value as any, {
         mode,
         encoding: storageEncoding
       });
-      storageTokenEl.value = storageToken;
+      nextStorageToken = storageToken;
       const storageBack = await decompressFromStorage(storageToken, { encoding: storageEncoding });
-      storageRestoredEl.value = stringifySorted(storageBack);
+      nextStorageRestored = stringifySorted(storageBack);
     }
+
+    // If a newer update started while we awaited, abort applying results
+    if (seq !== updateSeq) {
+      return;
+    }
+
+    convertedUrlEl.value = nextConvertedUrl;
+    restoredUrlEl.value = nextRestoredUrl;
+    storageTokenEl.value = nextStorageToken;
+    storageRestoredEl.value = nextStorageRestored;
     convertedUrlEl.classList.remove("error");
     restoredUrlEl.classList.remove("error");
   } catch (e: any) {
+    if (seq !== updateSeq) {
+      return;
+    }
     convertedUrlEl.value = String(e?.message || e);
     restoredUrlEl.value = "";
     convertedUrlEl.classList.add("error");
@@ -95,6 +115,10 @@ async function update() {
   }
 
   // Update meta info (character counts and compression %)
+  if (seq !== updateSeq) {
+    return;
+  }
+
   const convLen = convertedUrlEl.value.length;
   // Base length is minified JSON length to compare compactness fairly;
   // use strict JSON parsing only, otherwise show a baseline warning.
@@ -130,8 +154,8 @@ async function update() {
 
   // Equality indicators for restored values
   try {
-    const value = safeEval(raw);
-    const srcNorm = stringifySorted(value);
+    const valueNow = safeEval(sourceEl.value.trim());
+    const srcNorm = stringifySorted(valueNow);
     const urlNorm = restoredUrlEl.value;
     const storageNorm = storageRestoredEl.value;
     if (urlNorm && srcNorm && urlNorm === srcNorm) {
@@ -283,26 +307,11 @@ btnLong.addEventListener("click", () => {
   sourceEl.value = stringifySorted(v);
   void update();
 });
-void update();
+// initial update handled by default preset below
 
-// Make "Medium" the default preset content on load
-(function setDefaultMedium() {
-  const v = {
-    columns: ["id", "createdAt", "customer", "status", "total", "currency", "items"],
-    columnVisibility: { customerEmail: false, internalNotes: false },
-    filters: {
-      createdAt: { from: "2024-01-01", to: "2024-06-30" },
-      customer: { like: "smith" },
-      status: ["paid", "shipped"],
-      total: { gte: 100, lte: 1000 }
-    },
-    pagination: { page: 7, pageSize: 50 },
-    sorting: [
-      { id: "createdAt", desc: true },
-      { id: "total", desc: false }
-    ],
-    tableId: "orders"
-  };
+// Make "Short" the default preset content on load
+(function setDefaultShort() {
+  const v = { a: 1, b: true, name: "short", tags: ["x", "y"] };
   sourceEl.value = stringifySorted(v);
   void update();
 })();
