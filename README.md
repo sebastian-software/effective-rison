@@ -86,8 +86,8 @@ Convenience wrappers are also available if you prefer direct storage calls:
 ```js
 import { saveToLocalStorage, loadFromLocalStorage } from "@effective/rison";
 
-await saveToLocalStorage('app:state', { theme: 'dark' }, { encoding: 'base32768' });
-const state = await loadFromLocalStorage('app:state', { encoding: 'base32768' });
+await saveToLocalStorage("app:state", { theme: "dark" }, { encoding: "base32768" });
+const state = await loadFromLocalStorage("app:state", { encoding: "base32768" });
 ```
 
 ## Installation
@@ -117,6 +117,7 @@ npm install @effective/rison
 - `loadFromLocalStorage(key, { encoding })` → Promise<any | null>
 
 Notes:
+
 - Storage encoding defaults to `base32768` for maximum density with simple decoding. You can switch to `base64` for interoperability.
 - Compression prefixes remain the same: `g:` (gzip), `d:` (deflate), or none (raw Rison).
 

@@ -22,4 +22,3 @@ describe("Rison error handling", () => {
     expect(() => decode("(,a:1)")).toThrow(/extra ','/);
   });
 });
-

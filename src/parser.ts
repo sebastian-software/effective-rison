@@ -196,4 +196,3 @@ function readIdentifier(ctx: Context): string {
   ctx.index = i;
   return s.slice(start, i);
 }
-

@@ -37,18 +37,18 @@ function viewToArrayBuffer(view: Uint8Array): ArrayBuffer {
   return buffer.slice(byteOffset, byteOffset + byteLength) as ArrayBuffer;
 }
 
-export type CompressionMode = 'auto' | 'gzip' | 'deflate' | 'none';
-export type StorageEncoding = 'base64' | 'base32768';
+export type CompressionMode = "auto" | "gzip" | "deflate" | "none";
+export type StorageEncoding = "base64" | "base32768";
 
-async function compressWith(kind: 'gzip' | 'deflate', rison: string, encoding: StorageEncoding): Promise<string> {
+async function compressWith(kind: "gzip" | "deflate", rison: string, encoding: StorageEncoding): Promise<string> {
   const input = new TextEncoder().encode(rison);
-  const algo = kind === 'gzip' ? 'gzip' : 'deflate';
+  const algo = kind === "gzip" ? "gzip" : "deflate";
   const compressed = await new Response(
     new Blob([viewToArrayBuffer(input)]).stream().pipeThrough(new CompressionStream(algo))
   ).arrayBuffer();
   const bytes = new Uint8Array(compressed);
-  const payload = encoding === 'base32768' ? base32768Encode(bytes) : toBase64(bytes);
-  return kind === 'gzip' ? `g:${payload}` : `d:${payload}`;
+  const payload = encoding === "base32768" ? base32768Encode(bytes) : toBase64(bytes);
+  return kind === "gzip" ? `g:${payload}` : `d:${payload}`;
 }
 
 /**
@@ -59,20 +59,20 @@ export async function compressForStorage(
   value: RisonValue,
   options?: { mode?: CompressionMode; encoding?: StorageEncoding }
 ): Promise<string> {
-  const mode = options?.mode ?? 'auto';
-  const encoding: StorageEncoding = options?.encoding ?? 'base32768';
+  const mode = options?.mode ?? "auto";
+  const encoding: StorageEncoding = options?.encoding ?? "base32768";
   const r = encode(value);
 
-  if (mode === 'none') {
+  if (mode === "none") {
     return r;
   }
 
-  if (mode === 'gzip') {
-    return await compressWith('gzip', r, encoding);
+  if (mode === "gzip") {
+    return await compressWith("gzip", r, encoding);
   }
 
-  if (mode === 'deflate') {
-    return await compressWith('deflate', r, encoding);
+  if (mode === "deflate") {
+    return await compressWith("deflate", r, encoding);
   }
 
   // auto: skip compression for tiny payloads; otherwise choose shortest of raw/gzip/deflate
@@ -80,10 +80,7 @@ export async function compressForStorage(
     return r;
   }
 
-  const [gz, df] = await Promise.all([
-    compressWith('gzip', r, encoding),
-    compressWith('deflate', r, encoding)
-  ]);
+  const [gz, df] = await Promise.all([compressWith("gzip", r, encoding), compressWith("deflate", r, encoding)]);
   const candidates = [r, gz, df];
   let best = candidates[0];
 
@@ -103,23 +100,23 @@ export async function decompressFromStorage(
   token: string,
   options?: { encoding?: StorageEncoding }
 ): Promise<RisonValue> {
-  const encoding: StorageEncoding = options?.encoding ?? 'base32768';
+  const encoding: StorageEncoding = options?.encoding ?? "base32768";
 
-  if (token.startsWith('g:')) {
+  if (token.startsWith("g:")) {
     const data = token.slice(2);
-    const bytes = encoding === 'base32768' ? base32768Decode(data) : fromBase64(data);
+    const bytes = encoding === "base32768" ? base32768Decode(data) : fromBase64(data);
     const buf = await new Response(
-      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream('gzip'))
+      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream("gzip"))
     ).arrayBuffer();
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
   }
 
-  if (token.startsWith('d:')) {
+  if (token.startsWith("d:")) {
     const data = token.slice(2);
-    const bytes = encoding === 'base32768' ? base32768Decode(data) : fromBase64(data);
+    const bytes = encoding === "base32768" ? base32768Decode(data) : fromBase64(data);
     const buf = await new Response(
-      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream('deflate'))
+      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream("deflate"))
     ).arrayBuffer();
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
@@ -137,8 +134,8 @@ export async function saveToLocalStorage(
   options?: { mode?: CompressionMode; encoding?: StorageEncoding }
 ) {
   // eslint-disable-next-line no-undef
-  if (typeof localStorage === 'undefined') {
-    throw new Error('localStorage is not available in this environment');
+  if (typeof localStorage === "undefined") {
+    throw new Error("localStorage is not available in this environment");
   }
 
   const token = await compressForStorage(value, options);
@@ -151,8 +148,8 @@ export async function loadFromLocalStorage(
   options?: { encoding?: StorageEncoding }
 ): Promise<RisonValue | null> {
   // eslint-disable-next-line no-undef
-  if (typeof localStorage === 'undefined') {
-    throw new Error('localStorage is not available in this environment');
+  if (typeof localStorage === "undefined") {
+    throw new Error("localStorage is not available in this environment");
   }
   // eslint-disable-next-line no-undef
   const token = localStorage.getItem(key);
