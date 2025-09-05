@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
+import react from "@vitejs/plugin-react-swc";
 import path from "node:path";
 
 export default defineConfig({
@@ -11,15 +12,10 @@ export default defineConfig({
       input: path.resolve(__dirname, "docs/index.html")
     }
   },
-  plugins: [viteSingleFile()],
+  plugins: [react(), viteSingleFile()],
   resolve: {
     alias: {
       "@effective/rison": path.resolve(__dirname, "src/rison.ts")
     }
-  },
-  esbuild: {
-    jsxFactory: 'React.createElement',
-    jsxFragment: 'React.Fragment',
-    jsxInject: 'import React from "react"'
   }
 });
