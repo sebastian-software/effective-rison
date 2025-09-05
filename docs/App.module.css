@@ -3,14 +3,19 @@
   --card: #141820;
   --text: #e5e7eb;
   --muted: #9aa0aa;
-  --accent: #3178c6;
+  --accent: #8b5cf6; /* violet accent */
 }
 
 .page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--bg);
+  /* Layered violet/blue gradients over a deep base */
+  background:
+    radial-gradient(80vmax 80vmax at -20% -20%, rgba(139, 92, 246, 0.18), transparent 60%),
+    radial-gradient(70vmax 70vmax at 120% 120%, rgba(96, 165, 250, 0.18), transparent 60%),
+    linear-gradient(120deg, rgba(139, 92, 246, 0.08), rgba(96, 165, 250, 0.06)),
+    #0b0e19;
   color: var(--text);
   font-family:
     ui-sans-serif,
@@ -30,12 +35,28 @@
 /* Global resets to avoid overflow and default margins */
 :global(*) { box-sizing: border-box; }
 :global(html, body) { height: 100%; }
-:global(body) { margin: 0; background: var(--bg); color: var(--text); }
+:global(body) {
+  margin: 0;
+  background:
+    radial-gradient(80vmax 80vmax at -20% -20%, rgba(139, 92, 246, 0.18), transparent 60%),
+    radial-gradient(70vmax 70vmax at 120% 120%, rgba(96, 165, 250, 0.18), transparent 60%),
+    linear-gradient(120deg, rgba(139, 92, 246, 0.08), rgba(96, 165, 250, 0.06)),
+    #0b0e19;
+  color: var(--text);
+}
 
 .header {
   text-align: center;
   padding: 1rem;
 }
+.header h1 {
+  margin: 0.2rem 0 0.3rem;
+  background: linear-gradient(90deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.header p { color: var(--muted); margin: 0.2rem 0; }
 
 .grid {
   display: grid;
@@ -57,4 +78,3 @@
   .grid { grid-template-columns: 1fr; grid-template-rows: auto; }
   .source { grid-row: auto; }
 }
-
