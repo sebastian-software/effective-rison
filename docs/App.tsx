@@ -176,9 +176,7 @@ export default function App() {
         <RestoredPanel id="storageRestored" title="Restored (Storage)" value={storageRestored} ok={storageOk} />
       </main>
 
-      <footer className={layout.header}>
-        <small style={{ color: 'var(--muted)' }}>TypeScript-first, ESM-only. © Sebastian Software GmbH.</small>
-      </footer>
+      {/* Footer removed per request */}
     </div>
   )
 }

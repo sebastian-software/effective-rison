@@ -8,6 +8,7 @@
   min-height: 0;
 }
 .labelRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 2px 0; margin-bottom: 10px; }
-.title { font-size: 0.98rem; font-weight: 600; margin: 0; color: var(--accent); display: inline-flex; align-items: center; gap: 8px; }
+.title { font-size: calc(1rem + 2px); font-weight: 600; margin: 0; color: var(--accent); display: inline-flex; align-items: center; gap: 8px; }
+.title > * { display: inline-flex; align-items: center; gap: 8px; }
+.title svg { width: 20px; height: 20px; vertical-align: middle; }
 .metaInline { color: var(--muted); font-size: 12px; display: inline-flex; gap: 12px; align-items: center; }
-
