@@ -13,6 +13,12 @@
   <img alt="Made in Germany" src="https://img.shields.io/badge/Made%20in-Germany-black">
 </p>
 
+<p>
+  <a href="https://sebastian-software.github.io/effective-rison/" target="_blank" rel="noopener">
+    <img alt="Open Demo" src="https://img.shields.io/badge/Demo-Open%20Live-2ea44f?style=for-the-badge">
+  </a>
+</p>
+
 Modern, TypeScript-first, ESM-only Rison: compact, URI-friendly encoding for JSON-like structures.
 
 Rison is a slight variation of JSON that looks vastly superior after URI encoding — great for
@@ -76,6 +82,51 @@ npm i @effective/rison
 - `decompressFromUrl(string)` → any (reverse of `compressToUrl`)
 
 Types are published via `dist/rison.d.ts`.
+
+## Demos & Examples
+
+- Live demo: GitHub Pages (3-pane source → converted → restored) — enabled via Actions.
+
+## Nuqs Integration
+
+Use Rison with [nuqs](https://github.com/47ng/nuqs) to manage URL state in React apps.
+
+```tsx
+import { useQueryState } from "nuqs";
+import { encode, decode } from "@effective/rison";
+
+// Rison serializer for nuqs
+const risonSerializer = {
+  parse: (value: string) => decode(value),
+  serialize: (value: unknown) => encode(value)
+};
+
+export function Example() {
+  // e.g. ?state=(filter:(active:!t),page:3)
+  const [state, setState] = useQueryState("state", risonSerializer as any);
+
+  return (
+    <div>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
+      <button onClick={() => setState({ filter: { active: true }, page: 3 })}>Set State</button>
+    </div>
+  );
+}
+```
+
+Compressed variant (smaller URLs) using `lz-string`:
+
+```tsx
+import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
+import { encode, decode } from "@effective/rison";
+
+const risonCompressed = {
+  parse: (value: string) => decode(decompressFromEncodedURIComponent(value) ?? ""),
+  serialize: (value: unknown) => compressToEncodedURIComponent(encode(value))
+};
+```
+
+For smaller URLs, use the compressed variant above.
 
 ## Breaking changes in v1
 
