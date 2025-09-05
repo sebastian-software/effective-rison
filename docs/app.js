@@ -1,11 +1,17 @@
 // When deployed, this page and the built files live at the same root.
 // Copy step in CI places the build under ./dist, so import from there.
-import { encode, decode, compressToUrl, decompressFromUrl } from "./dist/rison.js";
-
 const sourceEl = document.getElementById("source");
 const convertedEl = document.getElementById("converted");
 const restoredEl = document.getElementById("restored");
 const useCompressionEl = document.getElementById("useCompression");
+
+let encode, decode, compressToUrl, decompressFromUrl;
+async function loadLib() {
+  // Resolve path relative to this module to avoid GitHub Pages base path issues
+  const url = new URL("./dist/rison.js", import.meta.url);
+  const mod = await import(url.href);
+  ({ encode, decode, compressToUrl, decompressFromUrl } = mod);
+}
 
 function safeEval(input) {
   try {
@@ -47,6 +53,7 @@ function update() {
   }
 }
 
+await loadLib();
 sourceEl.addEventListener("input", update);
 useCompressionEl?.addEventListener("change", update);
 update();
