@@ -4,8 +4,7 @@ import { encode, decode, compressToUrl, decompressFromUrl } from '@effective/ris
 const sourceEl = document.getElementById('source') as HTMLTextAreaElement
 const convertedEl = document.getElementById('converted') as HTMLTextAreaElement
 const restoredEl = document.getElementById('restored') as HTMLTextAreaElement
-const useCompressionEl = document.getElementById('useCompression') as HTMLInputElement
-const modeSelectEl = document.getElementById('modeSelect') as HTMLSelectElement
+const modeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="mode"]'))
 const sourceMetaEl = document.getElementById('sourceMeta') as HTMLSpanElement
 const convertedMetaEl = document.getElementById('convertedMeta') as HTMLSpanElement
 
@@ -25,17 +24,17 @@ async function update() {
   const raw = sourceEl.value.trim()
   try {
     const value = safeEval(raw)
-    const useCompression = !!useCompressionEl?.checked
-    const mode = (modeSelectEl?.value ?? 'auto') as 'auto'|'gzip'|'deflate'|'none'
-    if (useCompression) {
-      const compressed = await compressToUrl(value as any, { mode })
-      convertedEl.value = compressed
-      const back = await (decompressFromUrl(compressed))
-      restoredEl.value = JSON.stringify(back, null, 2)
-    } else {
-      const r = encode(value as any)
+    const selected = modeRadios.find(r => r.checked)?.value as 'auto'|'gzip'|'deflate'|'none' | undefined
+    const mode = selected ?? 'auto'
+    const r = encode(value as any)
+    if (mode === 'none') {
       convertedEl.value = r
       const back = decode(r)
+      restoredEl.value = JSON.stringify(back, null, 2)
+    } else {
+      const compressed = await compressToUrl(value as any, { mode })
+      convertedEl.value = compressed
+      const back = await decompressFromUrl(compressed)
       restoredEl.value = JSON.stringify(back, null, 2)
     }
     convertedEl.classList.remove('error')
@@ -51,12 +50,15 @@ async function update() {
   const srcLen = sourceEl.value.length
   const convLen = convertedEl.value.length
   sourceMetaEl.textContent = `Characters: ${srcLen}`
-  const percent = srcLen > 0 ? Math.round(((srcLen - convLen) / srcLen) * 100) : 0
-  const sign = percent > 0 ? '+' : ''
-  convertedMetaEl.textContent = `Characters: ${convLen} • Compression: ${sign}${percent}%`
+  // Compare against uncompressed Rison length for a codec-focused metric
+  const risonUncompressed = encode(safeEval(sourceEl.value.trim()) as any)
+  const baseLen = risonUncompressed.length
+  const eff = baseLen > 0 ? Math.round(((baseLen - convLen) / baseLen) * 100) : 0
+  // Display positive percent with no sign when effective, negative with '-' when ineffective
+  const effStr = eff > 0 ? `${eff}%` : eff < 0 ? `-${Math.abs(eff)}%` : '0%'
+  convertedMetaEl.textContent = `Characters: ${convLen} • Compression: ${effStr}`
 }
 
 sourceEl.addEventListener('input', () => { void update() })
-useCompressionEl?.addEventListener('change', () => { void update() })
-modeSelectEl?.addEventListener('change', () => { void update() })
+modeRadios.forEach(r => r.addEventListener('change', () => { void update() }))
 void update()

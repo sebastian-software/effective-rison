@@ -10,17 +10,12 @@
     <header>
       <h1>@effective/rison Demo</h1>
       <p>Live encoding/decoding — Source → Converted → Restored</p>
-      <div class="controls">
-        <label style="margin-right:12px"><input type="checkbox" id="useCompression" /> Use compression</label>
-        <label>
-          Mode:
-          <select id="modeSelect">
-            <option value="auto" selected>auto</option>
-            <option value="gzip">gzip</option>
-            <option value="deflate">deflate</option>
-            <option value="none">none</option>
-          </select>
-        </label>
+      <div class="controls" role="radiogroup" aria-label="Compression mode">
+        <span class="controls-label">Compression:</span>
+        <label><input type="radio" name="mode" value="auto" checked /> auto</label>
+        <label><input type="radio" name="mode" value="gzip" /> gzip</label>
+        <label><input type="radio" name="mode" value="deflate" /> deflate</label>
+        <label><input type="radio" name="mode" value="none" /> none</label>
       </div>
       <p>
         Repo: <a href="https://github.com/sebastian-software/effective-rison" target="_blank" rel="noreferrer">sebastian-software/effective-rison</a>
@@ -60,7 +55,7 @@
       </section>
       <section>
         <label for="converted">Converted (Rison)</label>
-        <textarea id="converted" readonly wrap="off"></textarea>
+        <textarea id="converted" readonly wrap="soft"></textarea>
         <div class="meta"><span id="convertedMeta">Characters: 0 • Compression: 0%</span></div>
       </section>
       <section>

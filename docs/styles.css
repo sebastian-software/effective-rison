@@ -19,8 +19,8 @@ header, footer { text-align: center; padding: 1rem; }
 header h1 { margin: 0.2rem 0; }
 header p { margin: 0.2rem 0; color: var(--muted); }
 header .controls { margin: 8px auto; display: inline-flex; align-items: center; gap: 12px; background: #0b0d12; border: 1px solid #232737; padding: 6px 10px; border-radius: 999px; }
-header .controls label { cursor: pointer; user-select: none; }
-header .controls select { background: #0f1115; color: var(--text); border: 1px solid #232737; border-radius: 6px; padding: 4px 6px; }
+header .controls label { cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 6px; }
+header .controls .controls-label { color: var(--muted); margin-right: 4px; }
 main.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -47,6 +47,12 @@ textarea {
   word-break: normal;
   overflow-wrap: normal;
   overflow: auto;
+}
+/* Center pane: wrap aggressively at the edge, even inside long tokens */
+textarea#converted {
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 textarea[readonly] { opacity: 0.9; }
 textarea.error { border-color: #b91c1c; box-shadow: 0 0 0 2px rgba(185,28,28,0.15) inset; }
