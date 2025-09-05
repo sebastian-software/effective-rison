@@ -11,7 +11,16 @@
       <h1>@effective/rison Demo</h1>
       <p>Live encoding/decoding — Source → Converted → Restored</p>
       <div class="controls">
-        <label><input type="checkbox" id="useCompression" /> Use compression (lz-string)</label>
+        <label style="margin-right:12px"><input type="checkbox" id="useCompression" /> Use compression</label>
+        <label>
+          Mode:
+          <select id="modeSelect">
+            <option value="auto" selected>auto</option>
+            <option value="gzip">gzip</option>
+            <option value="deflate">deflate</option>
+            <option value="none">none</option>
+          </select>
+        </label>
       </div>
       <p>
         Repo: <a href="https://github.com/sebastian-software/effective-rison" target="_blank" rel="noreferrer">sebastian-software/effective-rison</a>

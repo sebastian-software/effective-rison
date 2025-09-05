@@ -5,6 +5,7 @@ const sourceEl = document.getElementById('source') as HTMLTextAreaElement
 const convertedEl = document.getElementById('converted') as HTMLTextAreaElement
 const restoredEl = document.getElementById('restored') as HTMLTextAreaElement
 const useCompressionEl = document.getElementById('useCompression') as HTMLInputElement
+const modeSelectEl = document.getElementById('modeSelect') as HTMLSelectElement
 const sourceMetaEl = document.getElementById('sourceMeta') as HTMLSpanElement
 const convertedMetaEl = document.getElementById('convertedMeta') as HTMLSpanElement
 
@@ -20,15 +21,16 @@ function safeEval(input: string): unknown {
   }
 }
 
-function update() {
+async function update() {
   const raw = sourceEl.value.trim()
   try {
     const value = safeEval(raw)
     const useCompression = !!useCompressionEl?.checked
+    const mode = (modeSelectEl?.value ?? 'auto') as 'auto'|'gzip'|'deflate'|'none'
     if (useCompression) {
-      const compressed = compressToUrl(value as any)
+      const compressed = await compressToUrl(value as any, { mode })
       convertedEl.value = compressed
-      const back = decompressFromUrl(compressed)
+      const back = await (decompressFromUrl(compressed))
       restoredEl.value = JSON.stringify(back, null, 2)
     } else {
       const r = encode(value as any)
@@ -54,6 +56,7 @@ function update() {
   convertedMetaEl.textContent = `Characters: ${convLen} • Compression: ${sign}${percent}%`
 }
 
-sourceEl.addEventListener('input', update)
-useCompressionEl?.addEventListener('change', update)
-update()
+sourceEl.addEventListener('input', () => { void update() })
+useCompressionEl?.addEventListener('change', () => { void update() })
+modeSelectEl?.addEventListener('change', () => { void update() })
+void update()

@@ -46,15 +46,15 @@ encodeArray(["A", "B", { supportsObjects: true }]);
 // -> A,B,(supportsObjects:!t)
 ```
 
-Optional URL compression helpers using lz-string:
+Optional URL compression helpers (native gzip via CompressionStream in modern browsers):
 
 ```js
 import { compressToUrl, decompressFromUrl } from "@effective/rison";
 
-const compact = compressToUrl({ page: 1, filters: { active: true } });
+const compact = await compressToUrl({ page: 1, filters: { active: true } });
 // -> safe, compact string for query params/fragments
 
-const value = decompressFromUrl(compact);
+const value = await decompressFromUrl(compact);
 // -> original value
 ```
 

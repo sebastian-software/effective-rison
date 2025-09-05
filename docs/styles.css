@@ -16,8 +16,9 @@ body {
 header, footer { text-align: center; padding: 1rem; }
 header h1 { margin: 0.2rem 0; }
 header p { margin: 0.2rem 0; color: var(--muted); }
-header .controls { margin: 8px auto; display: inline-block; background: #0b0d12; border: 1px solid #232737; padding: 6px 10px; border-radius: 999px; }
+header .controls { margin: 8px auto; display: inline-flex; align-items: center; gap: 12px; background: #0b0d12; border: 1px solid #232737; padding: 6px 10px; border-radius: 999px; }
 header .controls label { cursor: pointer; user-select: none; }
+header .controls select { background: #0f1115; color: var(--text); border: 1px solid #232737; border-radius: 6px; padding: 4px 6px; }
 main.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
