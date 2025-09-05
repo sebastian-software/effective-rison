@@ -59,7 +59,7 @@ const value = await decompressFromUrl(compact);
 
 - `none`: returns raw Rison (no prefix)
 - `gzip`: returns a token prefixed with `g:` and base64url‑encoded
-- `deflate`: returns a token prefixed with `d:` and base64url‑encoded
+- `deflate`: returns a token prefixed with `d:` and base64url‑encoded (uses deflate‑raw)
 - `auto`: compresses with both gzip and deflate and picks the shortest among raw/gzip/deflate
 // -> original value
 ```
@@ -119,7 +119,7 @@ npm install @effective/rison
 Notes:
 
 - Storage encoding defaults to `base32768` for maximum density with simple decoding. You can switch to `base64` for interoperability.
-- Compression prefixes remain the same: `g:` (gzip), `d:` (deflate), or none (raw Rison).
+- Compression prefixes remain the same: `g:` (gzip), `d:` (deflate), or none (raw rison).
 
 Types are published via `dist/rison.d.ts`.
 

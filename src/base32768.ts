@@ -1,26 +1,16 @@
-// Base32768-like codec: packs bytes into 15-bit chunks mapped to UTF-16 code units
-// avoiding surrogate range (0xD800..0xDFFF). Provides near-binary density.
+// Base32768-like codec: packs bytes into 15-bit chunks mapped to safe UTF-16 code units
+// using the continuous range 0x1000..0x8FFF (no ASCII/control chars, no surrogates).
 
 function valToSafeCodePoint(v: number): number {
-  // v in [0, 32767]
-  // Map to code points [0x0000..0xD7FF] U [0xE000..0xE7FF]
-  if (v >= 0xd800) {
-    return v + 0x800;
-  }
-
-  return v;
+  // v in [0, 32767]; map to [0x1000..0x8FFF] (exactly 32768 code points)
+  return 0x1000 + v;
 }
 
 function safeCodePointToVal(cp: number): number {
-  if (cp >= 0xd800 && cp <= 0xdfff) {
-    throw new Error("Invalid surrogate in base32768 string");
+  if (cp < 0x1000 || cp > 0x8fff) {
+    throw new Error("Invalid code point in base32768 string");
   }
-
-  if (cp >= 0xe000 && cp <= 0xe7ff) {
-    return cp - 0x800;
-  }
-
-  return cp;
+  return cp - 0x1000;
 }
 
 export function base32768Encode(bytes: Uint8Array): string {

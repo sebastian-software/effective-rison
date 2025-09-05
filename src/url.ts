@@ -40,7 +40,8 @@ export type CompressionMode = "auto" | "gzip" | "deflate" | "none";
 
 async function compressWith(kind: "gzip" | "deflate", rison: string): Promise<string> {
   const input = new TextEncoder().encode(rison);
-  const algo = kind === "gzip" ? "gzip" : "deflate";
+  // Prefer deflate-raw for consistency and portability
+  const algo = kind === "gzip" ? "gzip" : "deflate-raw";
   const compressed = await new Response(
     new Blob([viewToArrayBuffer(input)]).stream().pipeThrough(new CompressionStream(algo))
   ).arrayBuffer();
@@ -96,7 +97,7 @@ export async function decompressFromUrl(token: string): Promise<RisonValue> {
     const b64 = token.slice(2);
     const bytes = fromBase64Url(b64);
     const buf = await new Response(
-      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream("deflate"))
+      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream("deflate-raw"))
     ).arrayBuffer();
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);

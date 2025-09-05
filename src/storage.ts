@@ -42,7 +42,8 @@ export type StorageEncoding = "base64" | "base32768";
 
 async function compressWith(kind: "gzip" | "deflate", rison: string, encoding: StorageEncoding): Promise<string> {
   const input = new TextEncoder().encode(rison);
-  const algo = kind === "gzip" ? "gzip" : "deflate";
+  // Prefer deflate-raw for consistency and portability
+  const algo = kind === "gzip" ? "gzip" : "deflate-raw";
   const compressed = await new Response(
     new Blob([viewToArrayBuffer(input)]).stream().pipeThrough(new CompressionStream(algo))
   ).arrayBuffer();
@@ -116,7 +117,7 @@ export async function decompressFromStorage(
     const data = token.slice(2);
     const bytes = encoding === "base32768" ? base32768Decode(data) : fromBase64(data);
     const buf = await new Response(
-      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream("deflate"))
+      new Blob([viewToArrayBuffer(bytes)]).stream().pipeThrough(new DecompressionStream("deflate-raw"))
     ).arrayBuffer();
     const r = new TextDecoder().decode(new Uint8Array(buf));
     return decode(r);
