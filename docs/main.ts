@@ -1,5 +1,14 @@
 import "./styles.css";
-import { encode, decode, compressToUrl, decompressFromUrl } from "@effective/rison";
+import {
+  encode,
+  decode,
+  compressToUrl,
+  decompressFromUrl,
+  compressForStorage,
+  decompressFromStorage,
+  saveToLocalStorage,
+  loadFromLocalStorage
+} from "@effective/rison";
 
 const sourceEl = document.getElementById("source") as HTMLTextAreaElement;
 const convertedEl = document.getElementById("converted") as HTMLTextAreaElement;
@@ -11,6 +20,16 @@ const btnShort = document.getElementById("btnShort") as HTMLButtonElement;
 const btnMedium = document.getElementById("btnMedium") as HTMLButtonElement;
 const btnLong = document.getElementById("btnLong") as HTMLButtonElement;
 const convertedMetaEl = document.getElementById("convertedMeta") as HTMLSpanElement;
+const storageTokenEl = document.getElementById("storageToken") as HTMLTextAreaElement;
+const storageRestoredEl = document.getElementById("storageRestored") as HTMLTextAreaElement;
+const storageMetaEl = document.getElementById("storageMeta") as HTMLSpanElement;
+const storageEncodingRadios = Array.from(
+  document.querySelectorAll<HTMLInputElement>('input[name="storageEncoding"]')
+);
+const btnSaveLS = document.getElementById("btnSaveLS") as HTMLButtonElement;
+const btnLoadLS = document.getElementById("btnLoadLS") as HTMLButtonElement;
+const btnClearLS = document.getElementById("btnClearLS") as HTMLButtonElement;
+const lsStatusEl = document.getElementById("lsStatus") as HTMLSpanElement;
 
 function safeEval(input: string): unknown {
   try {
@@ -48,6 +67,9 @@ async function update() {
     const value = safeEval(raw);
     const selected = modeRadios.find((r) => r.checked)?.value as "auto" | "gzip" | "deflate" | "none" | undefined;
     const mode = selected ?? "auto";
+    const storageEncoding =
+      (storageEncodingRadios.find((r) => r.checked)?.value as "base32768" | "base64" | undefined) ??
+      "base32768";
     // Compute uncompressed Rison once to avoid whitespace noise from the source JSON
     const r = encode(value as any);
     if (mode === "none") {
@@ -59,6 +81,20 @@ async function update() {
       convertedEl.value = compressed;
       const back = await decompressFromUrl(compressed);
       restoredEl.value = stringifySorted(back);
+    }
+
+    // Storage token and roundtrip
+    if (mode === "none") {
+      storageTokenEl.value = r;
+      storageRestoredEl.value = stringifySorted(decode(r));
+    } else {
+      const storageToken = await compressForStorage(value as any, {
+        mode,
+        encoding: storageEncoding
+      });
+      storageTokenEl.value = storageToken;
+      const storageBack = await decompressFromStorage(storageToken, { encoding: storageEncoding });
+      storageRestoredEl.value = stringifySorted(storageBack);
     }
     convertedEl.classList.remove("error");
     restoredEl.classList.remove("error");
@@ -90,12 +126,28 @@ async function update() {
         })()
       : "n/a";
   convertedMetaEl.textContent = `Characters: ${convLen} • Compression: ${effStr}`;
+
+  // Storage meta
+  const storageLen = storageTokenEl.value.length;
+  const storageEffStr =
+    baseLen > 0
+      ? (() => {
+          const eff = Math.round(((baseLen - storageLen) / baseLen) * 100);
+          return eff > 0 ? `${eff}%` : eff < 0 ? `-${Math.abs(eff)}%` : "0%";
+        })()
+      : "n/a";
+  storageMetaEl.textContent = `Characters: ${storageLen} • Compression: ${storageEffStr}`;
 }
 
 sourceEl.addEventListener("input", () => {
   void update();
 });
 modeRadios.forEach((r) =>
+  r.addEventListener("change", () => {
+    void update();
+  })
+);
+storageEncodingRadios.forEach((r) =>
   r.addEventListener("change", () => {
     void update();
   })
@@ -211,3 +263,70 @@ btnLong.addEventListener("click", () => {
   void update();
 });
 void update();
+
+// Make "Medium" the default preset content on load
+(function setDefaultMedium() {
+  const v = {
+    columns: ["id", "createdAt", "customer", "status", "total", "currency", "items"],
+    columnVisibility: { customerEmail: false, internalNotes: false },
+    filters: {
+      createdAt: { from: "2024-01-01", to: "2024-06-30" },
+      customer: { like: "smith" },
+      status: ["paid", "shipped"],
+      total: { gte: 100, lte: 1000 }
+    },
+    pagination: { page: 7, pageSize: 50 },
+    sorting: [
+      { id: "createdAt", desc: true },
+      { id: "total", desc: false }
+    ],
+    tableId: "orders"
+  };
+  sourceEl.value = stringifySorted(v);
+  void update();
+})();
+
+// LocalStorage demo actions
+const LS_KEY = "rison:demo";
+btnSaveLS.addEventListener("click", async () => {
+  lsStatusEl.textContent = "";
+  try {
+    const value = safeEval(sourceEl.value.trim());
+    const selected = modeRadios.find((r) => r.checked)?.value as "auto" | "gzip" | "deflate" | "none" | undefined;
+    const mode = selected ?? "auto";
+    const storageEncoding =
+      (storageEncodingRadios.find((r) => r.checked)?.value as "base32768" | "base64" | undefined) ??
+      "base32768";
+    await saveToLocalStorage(LS_KEY, value as any, { mode, encoding: storageEncoding });
+    lsStatusEl.textContent = "Saved";
+  } catch (e: any) {
+    lsStatusEl.textContent = String(e?.message || e);
+  }
+});
+
+btnLoadLS.addEventListener("click", async () => {
+  lsStatusEl.textContent = "";
+  try {
+    const storageEncoding =
+      (storageEncodingRadios.find((r) => r.checked)?.value as "base32768" | "base64" | undefined) ??
+      "base32768";
+    const data = await loadFromLocalStorage(LS_KEY, { encoding: storageEncoding });
+    if (data == null) {
+      lsStatusEl.textContent = "No value";
+      return;
+    }
+    storageRestoredEl.value = stringifySorted(data);
+    lsStatusEl.textContent = "Loaded";
+  } catch (e: any) {
+    lsStatusEl.textContent = String(e?.message || e);
+  }
+});
+
+btnClearLS.addEventListener("click", () => {
+  try {
+    localStorage.removeItem(LS_KEY);
+    lsStatusEl.textContent = "Cleared";
+  } catch (e: any) {
+    lsStatusEl.textContent = String(e?.message || e);
+  }
+});

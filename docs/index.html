@@ -17,6 +17,12 @@
         <label><input type="radio" name="mode" value="deflate" /> deflate</label>
         <label><input type="radio" name="mode" value="none" /> none</label>
       </div>
+
+      <div class="controls" role="radiogroup" aria-label="Storage encoding">
+        <span class="controls-label">Storage encoding:</span>
+        <label><input type="radio" name="storageEncoding" value="base32768" checked /> base32768</label>
+        <label><input type="radio" name="storageEncoding" value="base64" /> base64</label>
+      </div>
       <p>
         Repo:
         <a href="https://github.com/sebastian-software/effective-rison" target="_blank" rel="noreferrer"
@@ -78,6 +84,29 @@
       <section>
         <label for="restored">Restored (read-only)</label>
         <textarea id="restored" readonly wrap="off"></textarea>
+      </section>
+    </main>
+
+    <main class="grid">
+      <section>
+        <div class="label-row">
+          <label for="storageToken">Token (storage)</label>
+          <div class="meta-inline"><span id="storageMeta">Characters: 0</span></div>
+        </div>
+        <textarea id="storageToken" readonly wrap="soft"></textarea>
+      </section>
+      <section>
+        <label for="storageRestored">Restored (storage)</label>
+        <textarea id="storageRestored" readonly wrap="off"></textarea>
+      </section>
+      <section>
+        <label>LocalStorage</label>
+        <div class="preset-buttons">
+          <button id="btnSaveLS" type="button">Save current to localStorage</button>
+          <button id="btnLoadLS" type="button">Load from localStorage</button>
+          <button id="btnClearLS" type="button">Clear key</button>
+        </div>
+        <div class="meta">Key: <code>rison:demo</code><span id="lsStatus" class="warn"></span></div>
       </section>
     </main>
     <footer>
