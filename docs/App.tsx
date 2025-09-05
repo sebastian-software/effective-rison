@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import styles from './App.module.css'
+import layout from './styles/Layout.module.css'
+import ui from './styles/Primitives.module.css'
 import { encode, decode, compressToUrl, decompressFromUrl, compressForStorage, decompressFromStorage } from '@effective/rison'
+import { Controls } from './components/Controls'
+import { PresetButtons } from './components/PresetButtons'
+import { Panel } from './components/Panel'
+import { ConvertedPanel } from './components/ConvertedPanel'
+import { RestoredPanel } from './components/RestoredPanel'
+import { usePresets } from './hooks/usePresets'
+import { useCompressionMeta } from './hooks/useCompressionMeta'
 
 type Mode = 'auto' | 'deflate' | 'none'
 type StorageEncoding = 'base32768' | 'base64'
@@ -33,16 +41,19 @@ export default function App() {
   const [storageToken, setStorageToken] = useState('')
   const [storageRestored, setStorageRestored] = useState('')
   const [sourceWarn, setSourceWarn] = useState('')
+  const [sourceChars, setSourceChars] = useState<number>(0)
   const [urlMeta, setUrlMeta] = useState('Characters: 0 • Compression: 0%')
   const [storageMeta, setStorageMeta] = useState('Characters: 0 • Compression: 0%')
   const [urlOk, setUrlOk] = useState<boolean | null>(null)
   const [storageOk, setStorageOk] = useState<boolean | null>(null)
 
+  const { load } = usePresets()
+  const { metaFrom } = useCompressionMeta()
+
   // Default to Short preset
   useEffect(() => {
     ;(async () => {
-      const m = await import('./data/short.json')
-      setSource(JSON.stringify(m.default, null, 2))
+      setSource(await load('short'))
     })()
   }, [])
 
@@ -73,6 +84,7 @@ export default function App() {
       }
 
       const r = encode(value)
+      setSourceChars(source.length)
       let nextConvertedUrl = ''
       let nextRestoredUrl = ''
       let nextStorageToken = ''
@@ -106,20 +118,8 @@ export default function App() {
       setStorageRestored(nextStorageRestored)
 
       // metas: compare against minified JSON
-      try {
-        const obj = JSON.parse(source)
-        const minJson = JSON.stringify(obj)
-        const baseLen = minJson.length
-        const convLen = nextConvertedUrl.length
-        const storageLen = nextStorageToken.length
-        const eff = baseLen > 0 ? Math.round(((baseLen - convLen) / baseLen) * 100) : 0
-        const effS = baseLen > 0 ? Math.round(((baseLen - storageLen) / baseLen) * 100) : 0
-        setUrlMeta(`Characters: ${convLen} • Compression: ${baseLen > 0 ? `${eff}%` : 'n/a'}`)
-        setStorageMeta(`Characters: ${storageLen} • Compression: ${baseLen > 0 ? `${effS}%` : 'n/a'}`)
-      } catch {
-        setUrlMeta(`Characters: ${nextConvertedUrl.length} • Compression: n/a`)
-        setStorageMeta(`Characters: ${nextStorageToken.length} • Compression: n/a`)
-      }
+      setUrlMeta(metaFrom(source, nextConvertedUrl))
+      setStorageMeta(metaFrom(source, nextStorageToken))
 
       // equality markers
       try {
@@ -137,37 +137,8 @@ export default function App() {
   }, [source, mode, storageEncoding])
 
   const SourceControls = useMemo(
-    () => (
-      <div className={styles.buttons}>
-        <button
-          className={styles.button}
-          onClick={async () => {
-            const m = await import('./data/short.json')
-            setSource(JSON.stringify(m.default, null, 2))
-          }}
-        >
-          Short
-        </button>
-        <button
-          className={styles.button}
-          onClick={async () => {
-            const m = await import('./data/medium.json')
-            setSource(JSON.stringify(m.default, null, 2))
-          }}
-        >
-          Medium
-        </button>
-        <button
-          className={styles.button}
-          onClick={async () => {
-            const m = await import('./data/long.json')
-            setSource(JSON.stringify(m.default, null, 2))
-          }}
-        >
-          Long
-        </button>
-      </div>
-    ), []
+    () => <PresetButtons onLoad={(json) => setSource(json)} />,
+    []
   )
 
   const Status = ({ ok }: { ok: boolean | null }) => (
@@ -175,77 +146,34 @@ export default function App() {
   )
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
+    <div className={layout.page}>
+      <header className={layout.header}>
         <h1>@effective/rison Demo</h1>
         <p>Live encoding/decoding — Source → Converted → Restored</p>
-        <div className={styles.controls} role="radiogroup" aria-label="Compression mode">
-          <span className={styles.controlsLabel}>Compression:</span>
-          <label><input type="radio" name="mode" value="auto" checked={mode === 'auto'} onChange={() => setMode('auto')} /> auto</label>
-          <label><input type="radio" name="mode" value="deflate" checked={mode === 'deflate'} onChange={() => setMode('deflate')} /> deflate</label>
-          <label><input type="radio" name="mode" value="none" checked={mode === 'none'} onChange={() => setMode('none')} /> none</label>
-        </div>
-        <div className={styles.controls} role="radiogroup" aria-label="Storage encoding">
-          <span className={styles.controlsLabel}>Storage encoding:</span>
-          <label><input type="radio" name="storageEncoding" value="base32768" checked={storageEncoding === 'base32768'} onChange={() => setStorageEncoding('base32768')} /> base32768</label>
-          <label><input type="radio" name="storageEncoding" value="base64" checked={storageEncoding === 'base64'} onChange={() => setStorageEncoding('base64')} /> base64</label>
-        </div>
+        <Controls mode={mode} onMode={setMode} storageEncoding={storageEncoding} onStorageEncoding={setStorageEncoding} />
         <p>
           Repo: <a href="https://github.com/sebastian-software/effective-rison" target="_blank" rel="noreferrer">sebastian-software/effective-rison</a>
         </p>
       </header>
 
-      <main className={styles.grid}>
-        <section className={`${styles.card} ${styles.source}`}>
-          <div className={styles.labelRow}>
-            <label className={styles.title} htmlFor="source">Source (editable)</label>
-            <div className={styles.metaInline}>
-              <span>{/* reserved for future */}</span>
-              <span>{sourceWarn}</span>
-            </div>
-          </div>
+      <main className={layout.grid}>
+        <Panel
+          className={layout.source}
+          title={<label className={ui.title} htmlFor="source">Source JSON</label>}
+          right={<span>Characters: {sourceChars}</span>}
+        >
           {SourceControls}
-          <textarea id="source" className={styles.textarea} value={source} onChange={(e) => setSource(e.target.value)} spellCheck={false} wrap="off" />
-        </section>
+          <textarea id="source" className={ui.textarea} value={source} onChange={(e) => setSource(e.target.value)} spellCheck={false} wrap="off" />
+        </Panel>
 
-        <section className={`${styles.card} ${styles.convUrl}`}>
-          <div className={styles.labelRow}>
-            <label className={styles.title} htmlFor="convertedUrl">Converted (URL)</label>
-            <div className={styles.metaInline}><span>{urlMeta}</span></div>
-          </div>
-          <textarea id="convertedUrl" className={`${styles.textarea} ${styles.converted} ${styles.readonly}`} readOnly wrap="soft" value={convertedUrl} />
-        </section>
+        <ConvertedPanel id="convertedUrl" title="Converted (URL)" value={convertedUrl} meta={urlMeta} />
+        <RestoredPanel id="restoredUrl" title="Restored (URL)" value={restoredUrl} ok={urlOk} />
 
-        <section className={`${styles.card} ${styles.restUrl}`}>
-          <div className={styles.labelRow}>
-            <div className={styles.statusWrap}>
-              <label className={styles.title} htmlFor="restoredUrl">Restored (URL)</label>
-              <Status ok={urlOk} />
-            </div>
-          </div>
-          <textarea id="restoredUrl" className={`${styles.textarea} ${styles.readonly}`} readOnly wrap="off" value={restoredUrl} />
-        </section>
-
-        <section className={`${styles.card} ${styles.convStorage}`}>
-          <div className={styles.labelRow}>
-            <label className={styles.title} htmlFor="storageToken">Converted (Storage)</label>
-            <div className={styles.metaInline}><span>{storageMeta}</span></div>
-          </div>
-          <textarea id="storageToken" className={`${styles.textarea} ${styles.converted} ${styles.readonly}`} readOnly wrap="soft" value={storageToken} />
-        </section>
-
-        <section className={`${styles.card} ${styles.restStorage}`}>
-          <div className={styles.labelRow}>
-            <div className={styles.statusWrap}>
-              <label className={styles.title} htmlFor="storageRestored">Restored (Storage)</label>
-              <Status ok={storageOk} />
-            </div>
-          </div>
-          <textarea id="storageRestored" className={`${styles.textarea} ${styles.readonly}`} readOnly wrap="off" value={storageRestored} />
-        </section>
+        <ConvertedPanel id="storageToken" title="Converted (Storage)" value={storageToken} meta={storageMeta} />
+        <RestoredPanel id="storageRestored" title="Restored (Storage)" value={storageRestored} ok={storageOk} />
       </main>
 
-      <footer className={styles.header}>
+      <footer className={layout.header}>
         <small style={{ color: 'var(--muted)' }}>TypeScript-first, ESM-only. © Sebastian Software GmbH.</small>
       </footer>
     </div>
