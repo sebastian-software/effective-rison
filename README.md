@@ -27,6 +27,13 @@ storing compact state in URLs while expressing the same data structures as JSON.
 
 Original project: https://github.com/Nanonid/rison
 
+## Why Rison for URLs
+
+- Encodes nested objects/arrays compactly and URI‑friendly (minimal escaping).
+- Ideal for client state in query or fragment (filters, sorting, columns, pagination).
+- Practical URL limits are infrastructure‑driven: conservative target ≈ 2 KB total; common defaults ≈ 8 KB. Fragments (`#state=…`) aren’t sent to servers and bypass those limits.
+- This package includes native compression helpers (gzip/deflate via CompressionStream) with an `auto` mode that selects the shortest token.
+
 ## Quick Start
 
 ESM usage (Node 22+ or a bundler):

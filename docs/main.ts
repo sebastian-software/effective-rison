@@ -110,24 +110,32 @@ btnMedium.addEventListener('click', () => {
   void update()
 })
 btnLong.addEventListener('click', () => {
+  const columns = Array.from({ length: 50 }, (_, i) => `col${i + 1}`)
+  const countries = ['DE','FR','GB','US','CA','JP','CN','IT','ES','SE','NO','DK','FI','PL','NL','BE','AT','CH','PT','IE','CZ','SK','HU','RO','BG','GR','TR','AU','NZ','BR','AR','MX','ZA','IN','SG','KR']
+  const users = Array.from({ length: 200 }, (_, i) => `u${i + 1}`)
+  const views = Array.from({ length: 15 }, (_, i) => ({
+    id: `v${i + 1}`,
+    name: `View ${i + 1}`,
+    filters: {
+      status: ['paid','shipped','processing'],
+      total: { gte: i * 50, lte: i * 120 + 1000 }
+    }
+  }))
   const v = {
-    tableId: 'orders',
-    pagination: { page: 12, pageSize: 100 },
+    tableId: 'orders-large',
+    pagination: { page: 25, pageSize: 200 },
     sorting: [ { id: 'createdAt', desc: true }, { id: 'total', desc: false }, { id: 'status', desc: false } ],
     columnVisibility: { internalNotes: false, customerEmail: false, debug: false },
     filters: {
-      status: ['paid', 'shipped', 'processing'],
-      total: { gte: 50, lte: 5000 },
+      status: ['paid', 'shipped', 'processing', 'cancelled'],
+      total: { gte: 50, lte: 20000 },
       createdAt: { from: '2024-01-01', to: '2024-12-31' },
       customer: { like: 'john' },
-      country: ['DE', 'US', 'FR', 'GB', 'JP']
+      country: countries,
+      userIds: users
     },
-    columns: ['id','createdAt','customer','status','total','currency','items','notes','country','salesRep','priority'],
-    views: [
-      { id: 'last7', name: 'Last 7 days', filters: { createdAt: { from: '2024-06-24', to: '2024-06-30' } } },
-      { id: 'highValue', name: 'High Value', filters: { total: { gte: 2000 } } },
-      { id: 'europe', name: 'Europe', filters: { country: ['DE','FR','GB'] } }
-    ]
+    columns: ['id','createdAt','customer','status','total','currency','items','notes','country','salesRep','priority', ...columns],
+    views
   }
   sourceEl.value = stringifySorted(v)
   void update()
