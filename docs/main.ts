@@ -6,6 +6,7 @@ const convertedEl = document.getElementById('converted') as HTMLTextAreaElement
 const restoredEl = document.getElementById('restored') as HTMLTextAreaElement
 const modeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="mode"]'))
 const sourceMetaEl = document.getElementById('sourceMeta') as HTMLSpanElement
+const sourceWarnEl = document.getElementById('sourceWarn') as HTMLSpanElement
 const convertedMetaEl = document.getElementById('convertedMeta') as HTMLSpanElement
 
 function safeEval(input: string): unknown {
@@ -26,6 +27,7 @@ async function update() {
     const value = safeEval(raw)
     const selected = modeRadios.find(r => r.checked)?.value as 'auto'|'gzip'|'deflate'|'none' | undefined
     const mode = selected ?? 'auto'
+    // Compute uncompressed Rison once to avoid whitespace noise from the source JSON
     const r = encode(value as any)
     if (mode === 'none') {
       convertedEl.value = r
@@ -47,15 +49,22 @@ async function update() {
   }
 
   // Update meta info (character counts and compression %)
-  const srcLen = sourceEl.value.length
   const convLen = convertedEl.value.length
-  sourceMetaEl.textContent = `Characters: ${srcLen}`
-  // Compare against uncompressed Rison length for a codec-focused metric
-  const risonUncompressed = encode(safeEval(sourceEl.value.trim()) as any)
-  const baseLen = risonUncompressed.length
-  const eff = baseLen > 0 ? Math.round(((baseLen - convLen) / baseLen) * 100) : 0
-  // Display positive percent with no sign when effective, negative with '-' when ineffective
-  const effStr = eff > 0 ? `${eff}%` : eff < 0 ? `-${Math.abs(eff)}%` : '0%'
+  // Base length is the uncompressed Rison length; use strict JSON parsing only (ignore whitespace),
+  // and if it's not valid JSON, report a baseline warning and skip the metric.
+  let baseLen = 0
+  try {
+    const obj = JSON.parse(sourceEl.value)
+    baseLen = encode(obj as any).length
+    sourceWarnEl.textContent = ''
+  } catch {
+    sourceWarnEl.textContent = 'Baseline requires strict JSON input'
+  }
+  sourceMetaEl.textContent = `Characters: ${baseLen}`
+  const effStr = baseLen > 0 ? (() => {
+    const eff = Math.round(((baseLen - convLen) / baseLen) * 100)
+    return eff > 0 ? `${eff}%` : eff < 0 ? `-${Math.abs(eff)}%` : '0%'
+  })() : 'n/a'
   convertedMetaEl.textContent = `Characters: ${convLen} • Compression: ${effStr}`
 }
 
