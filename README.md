@@ -49,7 +49,7 @@ Optional URL compression helpers (native CompressionStream in modern browsers):
 ```js
 import { compressToUrl, decompressFromUrl } from "@effective/rison";
 
-// mode: 'auto' | 'gzip' | 'deflate' | 'none' (default: 'auto')
+// mode: 'auto' | 'deflate' | 'none' (default: 'auto')
 const compact = await compressToUrl({ page: 1, filters: { active: true } }, { mode: 'auto' });
 // -> safe, compact string for query params/fragments
 
@@ -58,9 +58,8 @@ const value = await decompressFromUrl(compact);
 ### Compression formats & prefixes
 
 - `none`: returns raw Rison (no prefix)
-- `gzip`: returns a token prefixed with `g:` and base64url‑encoded
-- `deflate`: returns a token prefixed with `d:` and base64url‑encoded (uses deflate‑raw)
-- `auto`: compresses with both gzip and deflate and picks the shortest among raw/gzip/deflate
+- `deflate`: returns a token prefixed with `d:` and base64url‑encoded (deflate‑raw)
+- `auto`: compares raw Rison vs deflate and picks the shortest
 // -> original value
 ```
 
@@ -71,7 +70,7 @@ For storage, URL compatibility isn’t required. This library offers high‑dens
 ```js
 import { compressForStorage, decompressFromStorage } from "@effective/rison";
 
-// mode: 'auto' | 'gzip' | 'deflate' | 'none' (default: 'auto')
+// mode: 'auto' | 'deflate' | 'none' (default: 'auto')
 // encoding: 'base32768' | 'base64' (default: 'base32768')
 const token = await compressForStorage({ theme: 'dark', tabs: [1, 2, 3] }, { encoding: 'base32768' });
 // store in localStorage yourself
@@ -119,14 +118,14 @@ npm install @effective/rison
 Notes:
 
 - Storage encoding defaults to `base32768` for maximum density with simple decoding. You can switch to `base64` for interoperability.
-- Compression prefixes remain the same: `g:` (gzip), `d:` (deflate), or none (raw rison).
+- Compression prefixes remain the same: `d:` (deflate-raw) or none (raw rison).
 
 Types are published via `dist/rison.d.ts`.
 
 ## Demos & Examples
 
 - Live demo: 3‑pane source → converted → restored
-  - Radio options for compression: auto, gzip, deflate, none
+  - Radio options for compression: auto, deflate, none
   - Three presets (Short/Medium/Long) to test compression impact
 
 ## Nuqs Integration

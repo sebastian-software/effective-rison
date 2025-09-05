@@ -93,13 +93,45 @@ section .preset-buttons button {
 section .preset-buttons button:hover {
   border-color: var(--accent);
 }
-main.grid {
+main.grid.single {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   padding: 12px;
   flex: 1;
   min-height: 0;
+}
+
+/* Storage layout: first row has source + url converted + url restored
+   second row repeats converted/restored for storage, while source spans rows */
+.grid-storage.single {
+  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-auto-rows: minmax(200px, 1fr);
+}
+
+#sourceSection {
+  grid-column: 1 / 2;
+  grid-row: 1 / span 2;
+}
+
+#convertedUrlSection {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+#restoredUrlSection {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+}
+
+#convertedStorageSection {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+}
+
+#restoredStorageSection {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
 }
 section {
   background: var(--card);
@@ -115,6 +147,23 @@ section label {
   font-weight: 600;
   margin: 0 0 8px 0;
   color: var(--accent);
+}
+
+.title-with-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status {
+  font-weight: 700;
+  color: var(--muted);
+}
+.status.ok {
+  color: #16a34a; /* green-600 */
+}
+.status.bad {
+  color: #dc2626; /* red-600 */
 }
 textarea {
   width: 100%;
@@ -163,8 +212,9 @@ footer small {
 }
 
 @media (max-width: 1000px) {
-  main.grid {
+  .grid-storage.single {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
   }
   textarea {
     min-height: 30vh;

@@ -13,7 +13,6 @@
       <div class="controls" role="radiogroup" aria-label="Compression mode">
         <span class="controls-label">Compression:</span>
         <label><input type="radio" name="mode" value="auto" checked /> auto</label>
-        <label><input type="radio" name="mode" value="gzip" /> gzip</label>
         <label><input type="radio" name="mode" value="deflate" /> deflate</label>
         <label><input type="radio" name="mode" value="none" /> none</label>
       </div>
@@ -30,8 +29,8 @@
         >
       </p>
     </header>
-    <main class="grid">
-      <section>
+    <main class="grid grid-storage single">
+      <section id="sourceSection">
         <div class="label-row">
           <label for="source">Source (editable)</label>
           <div class="meta-inline">
@@ -70,43 +69,41 @@
     "currency",
     "items"
   ]
-}</textarea
-        >
-        <div class="meta"><span id="sourceMeta">Characters: 0</span><span id="sourceWarn" class="warn"></span></div>
+}</textarea>
       </section>
-      <section>
+      <section id="convertedUrlSection">
         <div class="label-row">
-          <label for="converted">Converted (Rison)</label>
-          <div class="meta-inline"><span id="convertedMeta">Characters: 0 • Compression: 0%</span></div>
+          <label for="convertedUrl">Converted (URL)</label>
+          <div class="meta-inline"><span id="convertedUrlMeta">Characters: 0 • Compression: 0%</span></div>
         </div>
-        <textarea id="converted" readonly wrap="soft"></textarea>
+        <textarea id="convertedUrl" readonly wrap="soft"></textarea>
       </section>
-      <section>
-        <label for="restored">Restored (read-only)</label>
-        <textarea id="restored" readonly wrap="off"></textarea>
-      </section>
-    </main>
-
-    <main class="grid">
-      <section>
+      <section id="restoredUrlSection">
         <div class="label-row">
-          <label for="storageToken">Token (storage)</label>
-          <div class="meta-inline"><span id="storageMeta">Characters: 0</span></div>
+          <div class="title-with-status">
+            <label for="restoredUrl">Restored (URL)</label>
+            <span id="restoredUrlStatus" class="status">—</span>
+          </div>
+        </div>
+        <textarea id="restoredUrl" readonly wrap="off"></textarea>
+      </section>
+      
+      <!-- Storage row below -->
+      <section id="convertedStorageSection">
+        <div class="label-row">
+          <label for="storageToken">Converted (Storage)</label>
+          <div class="meta-inline"><span id="storageMeta">Characters: 0 • Compression: 0%</span></div>
         </div>
         <textarea id="storageToken" readonly wrap="soft"></textarea>
       </section>
-      <section>
-        <label for="storageRestored">Restored (storage)</label>
-        <textarea id="storageRestored" readonly wrap="off"></textarea>
-      </section>
-      <section>
-        <label>LocalStorage</label>
-        <div class="preset-buttons">
-          <button id="btnSaveLS" type="button">Save current to localStorage</button>
-          <button id="btnLoadLS" type="button">Load from localStorage</button>
-          <button id="btnClearLS" type="button">Clear key</button>
+      <section id="restoredStorageSection">
+        <div class="label-row">
+          <div class="title-with-status">
+            <label for="storageRestored">Restored (Storage)</label>
+            <span id="restoredStorageStatus" class="status">—</span>
+          </div>
         </div>
-        <div class="meta">Key: <code>rison:demo</code><span id="lsStatus" class="warn"></span></div>
+        <textarea id="storageRestored" readonly wrap="off"></textarea>
       </section>
     </main>
     <footer>

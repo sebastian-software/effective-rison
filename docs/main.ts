@@ -1,35 +1,24 @@
 import "./styles.css";
-import {
-  encode,
-  decode,
-  compressToUrl,
-  decompressFromUrl,
-  compressForStorage,
-  decompressFromStorage,
-  saveToLocalStorage,
-  loadFromLocalStorage
-} from "@effective/rison";
+import { encode, decode, compressToUrl, decompressFromUrl, compressForStorage, decompressFromStorage } from "@effective/rison";
 
 const sourceEl = document.getElementById("source") as HTMLTextAreaElement;
-const convertedEl = document.getElementById("converted") as HTMLTextAreaElement;
-const restoredEl = document.getElementById("restored") as HTMLTextAreaElement;
+const convertedUrlEl = document.getElementById("convertedUrl") as HTMLTextAreaElement;
+const restoredUrlEl = document.getElementById("restoredUrl") as HTMLTextAreaElement;
 const modeRadios = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="mode"]'));
 const sourceMetaEl = document.getElementById("sourceMeta") as HTMLSpanElement;
 const sourceWarnEl = document.getElementById("sourceWarn") as HTMLSpanElement;
 const btnShort = document.getElementById("btnShort") as HTMLButtonElement;
 const btnMedium = document.getElementById("btnMedium") as HTMLButtonElement;
 const btnLong = document.getElementById("btnLong") as HTMLButtonElement;
-const convertedMetaEl = document.getElementById("convertedMeta") as HTMLSpanElement;
+const convertedUrlMetaEl = document.getElementById("convertedUrlMeta") as HTMLSpanElement;
 const storageTokenEl = document.getElementById("storageToken") as HTMLTextAreaElement;
 const storageRestoredEl = document.getElementById("storageRestored") as HTMLTextAreaElement;
 const storageMetaEl = document.getElementById("storageMeta") as HTMLSpanElement;
 const storageEncodingRadios = Array.from(
   document.querySelectorAll<HTMLInputElement>('input[name="storageEncoding"]')
 );
-const btnSaveLS = document.getElementById("btnSaveLS") as HTMLButtonElement;
-const btnLoadLS = document.getElementById("btnLoadLS") as HTMLButtonElement;
-const btnClearLS = document.getElementById("btnClearLS") as HTMLButtonElement;
-const lsStatusEl = document.getElementById("lsStatus") as HTMLSpanElement;
+const restoredUrlStatusEl = document.getElementById("restoredUrlStatus") as HTMLSpanElement;
+const restoredStorageStatusEl = document.getElementById("restoredStorageStatus") as HTMLSpanElement;
 
 function safeEval(input: string): unknown {
   try {
@@ -65,7 +54,7 @@ async function update() {
   const raw = sourceEl.value.trim();
   try {
     const value = safeEval(raw);
-    const selected = modeRadios.find((r) => r.checked)?.value as "auto" | "gzip" | "deflate" | "none" | undefined;
+    const selected = modeRadios.find((r) => r.checked)?.value as "auto" | "deflate" | "none" | undefined;
     const mode = selected ?? "auto";
     const storageEncoding =
       (storageEncodingRadios.find((r) => r.checked)?.value as "base32768" | "base64" | undefined) ??
@@ -73,14 +62,14 @@ async function update() {
     // Compute uncompressed Rison once to avoid whitespace noise from the source JSON
     const r = encode(value as any);
     if (mode === "none") {
-      convertedEl.value = r;
+      convertedUrlEl.value = r;
       const back = decode(r);
-      restoredEl.value = stringifySorted(back);
+      restoredUrlEl.value = stringifySorted(back);
     } else {
       const compressed = await compressToUrl(value as any, { mode });
-      convertedEl.value = compressed;
+      convertedUrlEl.value = compressed;
       const back = await decompressFromUrl(compressed);
-      restoredEl.value = stringifySorted(back);
+      restoredUrlEl.value = stringifySorted(back);
     }
 
     // Storage token and roundtrip
@@ -96,23 +85,24 @@ async function update() {
       const storageBack = await decompressFromStorage(storageToken, { encoding: storageEncoding });
       storageRestoredEl.value = stringifySorted(storageBack);
     }
-    convertedEl.classList.remove("error");
-    restoredEl.classList.remove("error");
+    convertedUrlEl.classList.remove("error");
+    restoredUrlEl.classList.remove("error");
   } catch (e: any) {
-    convertedEl.value = String(e?.message || e);
-    restoredEl.value = "";
-    convertedEl.classList.add("error");
-    restoredEl.classList.add("error");
+    convertedUrlEl.value = String(e?.message || e);
+    restoredUrlEl.value = "";
+    convertedUrlEl.classList.add("error");
+    restoredUrlEl.classList.add("error");
   }
 
   // Update meta info (character counts and compression %)
-  const convLen = convertedEl.value.length;
-  // Base length is the uncompressed Rison length; use strict JSON parsing only (ignore whitespace),
-  // and if it's not valid JSON, report a baseline warning and skip the metric.
+  const convLen = convertedUrlEl.value.length;
+  // Base length is minified JSON length to compare compactness fairly;
+  // use strict JSON parsing only, otherwise show a baseline warning.
   let baseLen = 0;
   try {
     const obj = JSON.parse(sourceEl.value);
-    baseLen = encode(obj as any).length;
+    const minJson = JSON.stringify(obj);
+    baseLen = minJson.length;
     sourceWarnEl.textContent = "";
   } catch {
     sourceWarnEl.textContent = "Baseline requires strict JSON input";
@@ -125,7 +115,7 @@ async function update() {
           return eff > 0 ? `${eff}%` : eff < 0 ? `-${Math.abs(eff)}%` : "0%";
         })()
       : "n/a";
-  convertedMetaEl.textContent = `Characters: ${convLen} • Compression: ${effStr}`;
+  convertedUrlMetaEl.textContent = `Characters: ${convLen} • Compression: ${effStr}`;
 
   // Storage meta
   const storageLen = storageTokenEl.value.length;
@@ -137,6 +127,37 @@ async function update() {
         })()
       : "n/a";
   storageMetaEl.textContent = `Characters: ${storageLen} • Compression: ${storageEffStr}`;
+
+  // Equality indicators for restored values
+  try {
+    const value = safeEval(raw);
+    const srcNorm = stringifySorted(value);
+    const urlNorm = restoredUrlEl.value;
+    const storageNorm = storageRestoredEl.value;
+    if (urlNorm && srcNorm && urlNorm === srcNorm) {
+      restoredUrlStatusEl.textContent = "✓";
+      restoredUrlStatusEl.classList.add("ok");
+      restoredUrlStatusEl.classList.remove("bad");
+    } else {
+      restoredUrlStatusEl.textContent = "✗";
+      restoredUrlStatusEl.classList.add("bad");
+      restoredUrlStatusEl.classList.remove("ok");
+    }
+    if (storageNorm && srcNorm && storageNorm === srcNorm) {
+      restoredStorageStatusEl.textContent = "✓";
+      restoredStorageStatusEl.classList.add("ok");
+      restoredStorageStatusEl.classList.remove("bad");
+    } else {
+      restoredStorageStatusEl.textContent = "✗";
+      restoredStorageStatusEl.classList.add("bad");
+      restoredStorageStatusEl.classList.remove("ok");
+    }
+  } catch {
+    restoredUrlStatusEl.textContent = "—";
+    restoredUrlStatusEl.classList.remove("ok", "bad");
+    restoredStorageStatusEl.textContent = "—";
+    restoredStorageStatusEl.classList.remove("ok", "bad");
+  }
 }
 
 sourceEl.addEventListener("input", () => {
@@ -286,47 +307,4 @@ void update();
   void update();
 })();
 
-// LocalStorage demo actions
-const LS_KEY = "rison:demo";
-btnSaveLS.addEventListener("click", async () => {
-  lsStatusEl.textContent = "";
-  try {
-    const value = safeEval(sourceEl.value.trim());
-    const selected = modeRadios.find((r) => r.checked)?.value as "auto" | "gzip" | "deflate" | "none" | undefined;
-    const mode = selected ?? "auto";
-    const storageEncoding =
-      (storageEncodingRadios.find((r) => r.checked)?.value as "base32768" | "base64" | undefined) ??
-      "base32768";
-    await saveToLocalStorage(LS_KEY, value as any, { mode, encoding: storageEncoding });
-    lsStatusEl.textContent = "Saved";
-  } catch (e: any) {
-    lsStatusEl.textContent = String(e?.message || e);
-  }
-});
-
-btnLoadLS.addEventListener("click", async () => {
-  lsStatusEl.textContent = "";
-  try {
-    const storageEncoding =
-      (storageEncodingRadios.find((r) => r.checked)?.value as "base32768" | "base64" | undefined) ??
-      "base32768";
-    const data = await loadFromLocalStorage(LS_KEY, { encoding: storageEncoding });
-    if (data == null) {
-      lsStatusEl.textContent = "No value";
-      return;
-    }
-    storageRestoredEl.value = stringifySorted(data);
-    lsStatusEl.textContent = "Loaded";
-  } catch (e: any) {
-    lsStatusEl.textContent = String(e?.message || e);
-  }
-});
-
-btnClearLS.addEventListener("click", () => {
-  try {
-    localStorage.removeItem(LS_KEY);
-    lsStatusEl.textContent = "Cleared";
-  } catch (e: any) {
-    lsStatusEl.textContent = String(e?.message || e);
-  }
-});
+// LocalStorage demo removed

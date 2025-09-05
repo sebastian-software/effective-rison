@@ -37,19 +37,19 @@ function viewToArrayBuffer(view: Uint8Array): ArrayBuffer {
   return buffer.slice(byteOffset, byteOffset + byteLength) as ArrayBuffer;
 }
 
-export type CompressionMode = "auto" | "gzip" | "deflate" | "none";
+export type CompressionMode = "auto" | "deflate" | "none";
 export type StorageEncoding = "base64" | "base32768";
 
-async function compressWith(kind: "gzip" | "deflate", rison: string, encoding: StorageEncoding): Promise<string> {
+async function compressWith(kind: "deflate", rison: string, encoding: StorageEncoding): Promise<string> {
   const input = new TextEncoder().encode(rison);
-  // Prefer deflate-raw for consistency and portability
-  const algo = kind === "gzip" ? "gzip" : "deflate-raw";
+  // Use deflate-raw for consistency and portability
+  const algo = "deflate-raw";
   const compressed = await new Response(
     new Blob([viewToArrayBuffer(input)]).stream().pipeThrough(new CompressionStream(algo))
   ).arrayBuffer();
   const bytes = new Uint8Array(compressed);
   const payload = encoding === "base32768" ? base32768Encode(bytes) : toBase64(bytes);
-  return kind === "gzip" ? `g:${payload}` : `d:${payload}`;
+  return `d:${payload}`;
 }
 
 /**
@@ -68,10 +68,6 @@ export async function compressForStorage(
     return r;
   }
 
-  if (mode === "gzip") {
-    return await compressWith("gzip", r, encoding);
-  }
-
   if (mode === "deflate") {
     return await compressWith("deflate", r, encoding);
   }
@@ -81,8 +77,8 @@ export async function compressForStorage(
     return r;
   }
 
-  const [gz, df] = await Promise.all([compressWith("gzip", r, encoding), compressWith("deflate", r, encoding)]);
-  const candidates = [r, gz, df];
+  const df = await compressWith("deflate", r, encoding);
+  const candidates = [r, df];
   let best = candidates[0];
 
   for (const c of candidates) {
