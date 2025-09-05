@@ -16,6 +16,8 @@ body {
 header, footer { text-align: center; padding: 1rem; }
 header h1 { margin: 0.2rem 0; }
 header p { margin: 0.2rem 0; color: var(--muted); }
+header .controls { margin: 8px auto; display: inline-block; background: #0b0d12; border: 1px solid #232737; padding: 6px 10px; border-radius: 999px; }
+header .controls label { cursor: pointer; user-select: none; }
 main.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -37,10 +39,10 @@ textarea {
   font-size: 14px;
 }
 textarea[readonly] { opacity: 0.9; }
+textarea.error { border-color: #b91c1c; box-shadow: 0 0 0 2px rgba(185,28,28,0.15) inset; }
 footer small { color: var(--muted); }
 
 @media (max-width: 1000px) {
   main.grid { grid-template-columns: 1fr; }
   textarea { min-height: 30vh; }
 }
-
