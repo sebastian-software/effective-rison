@@ -20,7 +20,33 @@
     <main class="grid">
       <section>
         <h2>Source (editable)</h2>
-        <textarea id="source" spellcheck="false" aria-label="Source JSON or JS value">{"any":"json","yes":true}</textarea>
+        <textarea id="source" spellcheck="false" aria-label="Source JSON or JS value">{
+  "tableId": "orders",
+  "pagination": { "page": 7, "pageSize": 50 },
+  "sorting": [
+    { "id": "createdAt", "desc": true },
+    { "id": "total", "desc": false }
+  ],
+  "columnVisibility": {
+    "customerEmail": false,
+    "internalNotes": false
+  },
+  "filters": {
+    "status": ["paid", "shipped"],
+    "total": { "gte": 100, "lte": 1000 },
+    "createdAt": { "from": "2024-01-01", "to": "2024-06-30" },
+    "customer": { "like": "smith" }
+  },
+  "columns": [
+    "id",
+    "createdAt",
+    "customer",
+    "status",
+    "total",
+    "currency",
+    "items"
+  ]
+}</textarea>
         <div class="meta"><span id="sourceMeta">Characters: 0</span></div>
       </section>
       <section>
