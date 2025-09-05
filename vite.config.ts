@@ -16,5 +16,10 @@ export default defineConfig({
     alias: {
       "@effective/rison": path.resolve(__dirname, "src/rison.ts")
     }
+  },
+  esbuild: {
+    jsxFactory: 'React.createElement',
+    jsxFragment: 'React.Fragment',
+    jsxInject: 'import React from "react"'
   }
 });

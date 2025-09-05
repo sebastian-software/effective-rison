@@ -1,0 +1,60 @@
+{
+  "tableId": "orders-large",
+  "pagination": { "page": 25, "pageSize": 200 },
+  "sorting": [
+    { "id": "createdAt", "desc": true },
+    { "id": "total", "desc": false },
+    { "id": "status", "desc": false }
+  ],
+  "columnVisibility": { "internalNotes": false, "customerEmail": false, "debug": false },
+  "filters": {
+    "status": ["paid", "shipped", "processing", "cancelled"],
+    "total": { "gte": 50, "lte": 20000 },
+    "createdAt": { "from": "2024-01-01", "to": "2024-12-31" },
+    "customer": { "like": "john" },
+    "country": [
+      "DE", "FR", "GB", "US", "CA", "JP", "CN", "IT", "ES",
+      "SE", "NO", "DK", "FI", "PL", "NL", "BE", "AT", "CH",
+      "PT", "IE", "CZ", "SK", "HU", "RO", "BG", "GR", "TR",
+      "AU", "NZ", "BR", "AR", "MX", "ZA", "IN", "SG", "KR"
+    ],
+    "userIds": [
+      "u1", "u2", "u3", "u4", "u5", "u6", "u7", "u8", "u9", "u10",
+      "u11", "u12", "u13", "u14", "u15", "u16", "u17", "u18", "u19", "u20",
+      "u21", "u22", "u23", "u24", "u25", "u26", "u27", "u28", "u29", "u30",
+      "u31", "u32", "u33", "u34", "u35", "u36", "u37", "u38", "u39", "u40",
+      "u41", "u42", "u43", "u44", "u45", "u46", "u47", "u48", "u49", "u50",
+      "u51", "u52", "u53", "u54", "u55", "u56", "u57", "u58", "u59", "u60",
+      "u61", "u62", "u63", "u64", "u65", "u66", "u67", "u68", "u69", "u70",
+      "u71", "u72", "u73", "u74", "u75", "u76", "u77", "u78", "u79", "u80",
+      "u81", "u82", "u83", "u84", "u85", "u86", "u87", "u88", "u89", "u90",
+      "u91", "u92", "u93", "u94", "u95", "u96", "u97", "u98", "u99", "u100",
+      "u101", "u102", "u103", "u104", "u105", "u106", "u107", "u108", "u109", "u110",
+      "u111", "u112", "u113", "u114", "u115", "u116", "u117", "u118", "u119", "u120",
+      "u121", "u122", "u123", "u124", "u125", "u126", "u127", "u128", "u129", "u130",
+      "u131", "u132", "u133", "u134", "u135", "u136", "u137", "u138", "u139", "u140",
+      "u141", "u142", "u143", "u144", "u145", "u146", "u147", "u148", "u149", "u150",
+      "u151", "u152", "u153", "u154", "u155", "u156", "u157", "u158", "u159", "u160",
+      "u161", "u162", "u163", "u164", "u165", "u166", "u167", "u168", "u169", "u170",
+      "u171", "u172", "u173", "u174", "u175", "u176", "u177", "u178", "u179", "u180",
+      "u181", "u182", "u183", "u184", "u185", "u186", "u187", "u188", "u189", "u190",
+      "u191", "u192", "u193", "u194", "u195", "u196", "u197", "u198", "u199", "u200"
+    ]
+  },
+  "columns": [
+    "id", "createdAt", "customer", "status", "total", "currency", "items",
+    "notes", "country", "salesRep", "priority",
+    "col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8", "col9", "col10",
+    "col11", "col12", "col13", "col14", "col15", "col16", "col17", "col18", "col19", "col20",
+    "col21", "col22", "col23", "col24", "col25", "col26", "col27", "col28", "col29", "col30",
+    "col31", "col32", "col33", "col34", "col35", "col36", "col37", "col38", "col39", "col40",
+    "col41", "col42", "col43", "col44", "col45", "col46", "col47", "col48", "col49", "col50"
+  ],
+  "views": [
+    { "id": "v1", "name": "View 1", "filters": { "status": ["paid", "shipped", "processing"], "total": { "gte": 0, "lte": 1000 } } },
+    { "id": "v2", "name": "View 2", "filters": { "status": ["paid", "shipped", "processing"], "total": { "gte": 50, "lte": 1120 } } },
+    { "id": "v3", "name": "View 3", "filters": { "status": ["paid", "shipped", "processing"], "total": { "gte": 100, "lte": 1240 } } },
+    { "id": "v4", "name": "View 4", "filters": { "status": ["paid", "shipped", "processing"], "total": { "gte": 150, "lte": 1360 } } },
+    { "id": "v5", "name": "View 5", "filters": { "status": ["paid", "shipped", "processing"], "total": { "gte": 200, "lte": 1480 } } }
+  ]
+}

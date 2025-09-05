@@ -1,0 +1,81 @@
+:root {
+  --bg: #0f1115;
+  --card: #141820;
+  --text: #e5e7eb;
+  --muted: #9aa0aa;
+  --accent: #3178c6;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.header {
+  text-align: center;
+  padding: 1rem;
+}
+
+.controls {
+  margin: 8px auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #0b0d12;
+  border: 1px solid #232737;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+.controlsLabel { color: var(--muted); margin-right: 4px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #232737;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.source { grid-column: 1 / 2; grid-row: 1 / span 2; }
+.convUrl { grid-column: 2 / 3; grid-row: 1 / 2; }
+.restUrl { grid-column: 3 / 4; grid-row: 1 / 2; }
+.convStorage { grid-column: 2 / 3; grid-row: 2 / 3; }
+.restStorage { grid-column: 3 / 4; grid-row: 2 / 3; }
+
+.labelRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.metaInline { color: var(--muted); font-size: 12px; display: inline-flex; gap: 10px; }
+.title { font-size: 0.95rem; font-weight: 600; margin: 0 0 8px 0; color: var(--accent); }
+.statusWrap { display: inline-flex; align-items: center; gap: 8px; }
+.status { font-weight: 700; color: var(--muted); }
+.ok { color: #16a34a; }
+.bad { color: #dc2626; }
+
+.buttons { display: inline-flex; gap: 8px; margin: 6px 0 8px; }
+.button { background: #0f1115; color: var(--text); border: 1px solid #232737; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+.button:hover { border-color: var(--accent); }
+
+.textarea { width: 100%; flex: 1; min-height: 0; resize: vertical; background: #0b0d12; color: var(--text); border: 1px solid #232737; border-radius: 6px; padding: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 14px; white-space: pre; word-break: normal; overflow-wrap: normal; overflow: auto; }
+.converted { white-space: pre-wrap; word-break: break-all; overflow-wrap: anywhere; }
+.readonly { opacity: 0.9; }
+.error { border-color: #b91c1c; box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.15) inset; }
+
+@media (max-width: 1000px) {
+  .grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .source { grid-row: auto; }
+}
+

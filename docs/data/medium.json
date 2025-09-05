@@ -1,0 +1,17 @@
+{
+  "columns": ["id", "createdAt", "customer", "status", "total", "currency", "items"],
+  "columnVisibility": { "customerEmail": false, "internalNotes": false },
+  "filters": {
+    "createdAt": { "from": "2024-01-01", "to": "2024-06-30" },
+    "customer": { "like": "smith" },
+    "status": ["paid", "shipped"],
+    "total": { "gte": 100, "lte": 1000 }
+  },
+  "pagination": { "page": 7, "pageSize": 50 },
+  "sorting": [
+    { "id": "createdAt", "desc": true },
+    { "id": "total", "desc": false }
+  ],
+  "tableId": "orders"
+}
+
