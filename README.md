@@ -188,7 +188,7 @@ and publishes a GitHub Release.
 MIT — see [LICENSE.md](./LICENSE.md).
 
 - Copyright © 2007–2009 Metaweb Technologies, Inc.
-- Copyright © 2024–present, Sebastian Software GmbH, Germany.
+- Copyright © 2025–present, Sebastian Software GmbH, Germany.
 
 ## Acknowledgments
 
