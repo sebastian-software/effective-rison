@@ -1,6 +1,7 @@
 # rison
 
 <p>
+  <a href="https://oss.sebastian-software.com"><img src="https://img.shields.io/badge/Powered%20by-Sebastian%20Software-00718d?style=flat-square" alt="Powered by Sebastian Software"></a>
   <a href="https://www.npmjs.com/package/@effective/rison"><img alt="npm" src="https://img.shields.io/npm/v/%40effective%2Frison?logo=npm&color=cb3837"></a>
   <a href="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178c6?logo=typescript">
@@ -188,10 +189,24 @@ and publishes a GitHub Release.
 MIT — see [LICENSE.md](./LICENSE.md).
 
 - Copyright © 2007–2009 Metaweb Technologies, Inc.
-- Copyright © 2025–present, Sebastian Software GmbH, Germany.
 
 ## Acknowledgments
 
 - Originally created and published by Metaweb Technologies, Inc. (Google).
 - Encoder inspired by Douglas Crockford's json.js; decoder inspired by Oliver Steele's JSON for OpenLaszlo.
 - Thanks to all [contributors](https://github.com/sebastian-software/effective-rison/graphs/contributors) over the years.
+
+---
+
+<!-- sebastian-software-branding:start -->
+<p align="center">
+  <a href="https://oss.sebastian-software.com">
+    <img src="https://sebastian-brand.vercel.app/sebastian-software/logo-software.svg" alt="Sebastian Software" width="240" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://oss.sebastian-software.com">Open Source at Sebastian Software</a><br />
+  Copyright &copy; 2025 Sebastian Software GmbH
+</p>
+<!-- sebastian-software-branding:end -->
