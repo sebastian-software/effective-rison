@@ -8,7 +8,7 @@
   <img alt="Types Included" src="https://img.shields.io/badge/Types-Included-3178c6?logo=typescript">
   <img alt="Zero Dependencies" src="https://img.shields.io/badge/Dependencies-None-2ea44f">
   <img alt="Module" src="https://img.shields.io/badge/ESM-Only-000">
-  <img alt="Node" src="https://img.shields.io/badge/node-22%2B-339933?logo=node.js">
+  <a href="https://github.com/sebastian-software/effective-rison/actions/workflows/ci.yml"><img alt="Node.js test matrix 22, 24, and 26" src="https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933?logo=nodedotjs&amp;logoColor=white"></a>
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-10+-F69220?logo=pnpm">
   <img alt="Prettier" src="https://img.shields.io/badge/Code%20Style-Prettier-ff69b4?logo=prettier">
   <img alt="Vitest" src="https://img.shields.io/badge/Tests-Vitest-6E9F18">
