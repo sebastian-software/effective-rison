@@ -19,11 +19,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version-file: package.json
+          node-version: "26"
           package-manager-cache: false
 
-      - name: Enable Corepack
-        run: corepack enable
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
 
       - name: Install
         run: pnpm install --frozen-lockfile
@@ -36,3 +35,20 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+
+  test-node:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22", "24"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
